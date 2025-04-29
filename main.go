@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	"otel-generator/generator"
+	generator2 "otel-generator/internal/generator"
 
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp" // OTLP HTTP 트레이스 익스포터
@@ -20,8 +20,8 @@ func main() {
 		log.Fatalf("failed to create exporter: %v", err)
 	}
 
-	rg := generator.NewResource(1000)
-	sg := generator.NewSpanGenerator()
+	rg := generator2.NewResource(1000)
+	sg := generator2.NewSpanGenerator()
 
 	tp := trace.NewTracerProvider(
 		trace.WithBatcher(exporter),
@@ -30,7 +30,7 @@ func main() {
 
 	otel.SetTracerProvider(tp)
 
-	tg := generator.NewTraceGenerator(rg, sg)
+	tg := generator2.NewTraceGenerator(rg, sg)
 	for {
 		resource, span := tg.GenerateTrace()
 		_ = resource

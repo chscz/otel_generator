@@ -4,21 +4,21 @@ import (
 	"fmt"
 	"math/rand"
 
-	"otel-generator/attr"
+	attr2 "otel-generator/internal/attr"
 
 	"go.opentelemetry.io/otel/sdk/resource"
 	semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
 )
 
 type ResourceGenerator struct {
-	Services   []attr.Service
+	Services   []attr2.Service
 	SessionIDs []string
 }
 
 func NewResource(sessionCount int) *ResourceGenerator {
 	return &ResourceGenerator{
-		Services:   attr.GenerateServiceMocks(),
-		SessionIDs: attr.GenerateSessionIDMocks(sessionCount),
+		Services:   attr2.GenerateServiceMocks(),
+		SessionIDs: attr2.GenerateSessionIDMocks(sessionCount),
 	}
 }
 
@@ -32,8 +32,8 @@ func (r *ResourceGenerator) GenerateResource() *resource.Resource {
 			semconv.SchemaURL,
 			semconv.ServiceName(service.Name),
 			semconv.ServiceVersion(service.Version),
-			attr.ServiceKey(service.Key),
-			attr.SessionIDKey(sessionID),
+			attr2.ServiceKey(service.Key),
+			attr2.SessionIDKey(sessionID),
 		),
 	)
 	if err != nil {
@@ -43,11 +43,11 @@ func (r *ResourceGenerator) GenerateResource() *resource.Resource {
 	return rs
 }
 
-func (r *ResourceGenerator) pickService(n int) attr.Service {
+func (r *ResourceGenerator) pickService(n int) attr2.Service {
 	return r.Services[n]
 }
 
-func (r *ResourceGenerator) pickServiceRandom() attr.Service {
+func (r *ResourceGenerator) pickServiceRandom() attr2.Service {
 	return r.Services[rand.Intn(len(r.Services))]
 }
 

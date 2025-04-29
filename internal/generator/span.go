@@ -4,7 +4,7 @@ import (
 	"context"
 	"math/rand"
 
-	"otel-generator/attr"
+	attr2 "otel-generator/internal/attr"
 
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
@@ -13,14 +13,14 @@ import (
 var tracer = otel.Tracer("otel-generator")
 
 type SpanGenerator struct {
-	SpanTypes   []attr.SpanAttrSpanType
-	HTTPMethods []attr.SpanAttrHTTPMethod
+	SpanTypes   []attr2.SpanAttrSpanType
+	HTTPMethods []attr2.SpanAttrHTTPMethod
 }
 
 func NewSpanGenerator() *SpanGenerator {
 	return &SpanGenerator{
-		SpanTypes:   attr.GenerateSpanTypeMocks(),
-		HTTPMethods: attr.GenerateHTTPMethodMocks(),
+		SpanTypes:   attr2.GenerateSpanTypeMocks(),
+		HTTPMethods: attr2.GenerateHTTPMethodMocks(),
 	}
 }
 
@@ -29,8 +29,8 @@ func (s *SpanGenerator) GenerateSpan() *trace.Span {
 	defer span.End()
 
 	span.SetAttributes(
-		attr.SpanTypeKey(s.pickSpanTypeRandom()),
-		attr.HTTPMethodKey(s.pickHTTPMethodRandom()),
+		attr2.SpanTypeKey(s.pickSpanTypeRandom()),
+		attr2.HTTPMethodKey(s.pickHTTPMethodRandom()),
 	)
 
 	return &span
