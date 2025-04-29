@@ -5,18 +5,24 @@ import (
 	"math/rand"
 
 	"otel-generator/attr"
-	"otel-generator/domain"
 
 	"go.opentelemetry.io/otel/sdk/resource"
 	semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
 )
 
-type Resource struct {
-	Services   map[int]domain.Service
+type ResourceGenerator struct {
+	Services   []attr.Service
 	SessionIDs []string
 }
 
-func (r *Resource) GenerateResource() *resource.Resource {
+func NewResource(sessionCount int) *ResourceGenerator {
+	return &ResourceGenerator{
+		Services:   attr.GenerateServiceMocks(),
+		SessionIDs: attr.GenerateSessionIDMocks(sessionCount),
+	}
+}
+
+func (r *ResourceGenerator) GenerateResource() *resource.Resource {
 	service := r.pickServiceRandom()
 	sessionID := r.pickSessionIDRandom()
 
@@ -37,14 +43,14 @@ func (r *Resource) GenerateResource() *resource.Resource {
 	return rs
 }
 
-func (r *Resource) pickService(n int) domain.Service {
+func (r *ResourceGenerator) pickService(n int) attr.Service {
 	return r.Services[n]
 }
 
-func (r *Resource) pickServiceRandom() domain.Service {
+func (r *ResourceGenerator) pickServiceRandom() attr.Service {
 	return r.Services[rand.Intn(len(r.Services))]
 }
 
-func (r *Resource) pickSessionIDRandom() string {
+func (r *ResourceGenerator) pickSessionIDRandom() string {
 	return r.SessionIDs[rand.Intn(len(r.SessionIDs))]
 }
