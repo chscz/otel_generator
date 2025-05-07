@@ -15,11 +15,7 @@ func SessionIDKey(val string) attribute.KeyValue {
 	return ResourceSessionIDKey.String(val)
 }
 
-func GenerateSessionIDMocks(n int) []string {
-	sessionIDs := make([]string, n)
-	for i := 0; i < n; i++ {
-		id := uuid.New()
-		sessionIDs[i] = hex.EncodeToString(id[:])
-	}
-	return sessionIDs
+func GenerateSessionIDMocks() string {
+	id := uuid.New()
+	return hex.EncodeToString(id[:])
 }

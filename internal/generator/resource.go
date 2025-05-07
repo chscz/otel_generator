@@ -4,27 +4,27 @@ import (
 	"fmt"
 	"math/rand"
 
-	attr2 "otel-generator/internal/attr"
+	attr "otel-generator/internal/attr"
 
 	"go.opentelemetry.io/otel/sdk/resource"
 	semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
 )
 
 type ResourceGenerator struct {
-	Services   []attr2.Service
+	Services   []attr.Service
 	SessionIDs []string
 }
 
-func NewResource(sessionCount int) *ResourceGenerator {
+func NewResource() *ResourceGenerator {
 	return &ResourceGenerator{
-		Services:   attr2.GenerateServiceMocks(),
-		SessionIDs: attr2.GenerateSessionIDMocks(sessionCount),
+		Services: attr.GenerateServiceMocks(),
+		//SessionIDs: attr.GenerateSessionIDMocks(sessionCount),
 	}
 }
 
 func (r *ResourceGenerator) GenerateResource() *resource.Resource {
 	service := r.pickServiceRandom()
-	sessionID := r.pickSessionIDRandom()
+	sessionID := attr.GenerateSessionIDMocks()
 
 	rs, err := resource.Merge(
 		resource.Default(),
@@ -32,22 +32,22 @@ func (r *ResourceGenerator) GenerateResource() *resource.Resource {
 			semconv.SchemaURL,
 			semconv.ServiceName(service.Name),
 			semconv.ServiceVersion(service.Version),
-			attr2.ServiceKey(service.Key),
-			attr2.SessionIDKey(sessionID),
+			attr.ServiceKey(service.Key),
+			attr.SessionIDKey(sessionID),
 		),
 	)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Printf("failed to generate resource: %v", err)
 		return nil
 	}
 	return rs
 }
 
-func (r *ResourceGenerator) pickService(n int) attr2.Service {
+func (r *ResourceGenerator) pickService(n int) attr.Service {
 	return r.Services[n]
 }
 
-func (r *ResourceGenerator) pickServiceRandom() attr2.Service {
+func (r *ResourceGenerator) pickServiceRandom() attr.Service {
 	return r.Services[rand.Intn(len(r.Services))]
 }
 
