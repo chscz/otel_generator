@@ -1,4 +1,4 @@
-package attr
+package attrresource
 
 import (
 	"encoding/hex"

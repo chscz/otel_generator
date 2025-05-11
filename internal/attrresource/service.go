@@ -1,4 +1,4 @@
-package attr
+package attrresource
 
 import "go.opentelemetry.io/otel/attribute"
 
@@ -17,7 +17,14 @@ type Service struct {
 	Platform PlatformType
 }
 
-const ResourceServiceKey = attribute.Key("service.key")
+const (
+	ResourceServiceKey      = attribute.Key("service.key")
+	ResourceServicePlatform = attribute.Key("service.platform")
+)
+
+func ServicePlatform(val PlatformType) attribute.KeyValue {
+	return ResourceServicePlatform.String(string(val))
+}
 
 func ServiceKey(val string) attribute.KeyValue {
 	return ResourceServiceKey.String(val)

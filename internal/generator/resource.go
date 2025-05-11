@@ -4,27 +4,32 @@ import (
 	"fmt"
 	"math/rand"
 
-	attr "otel-generator/internal/attr"
+	"otel-generator/internal/attrresource"
 
 	"go.opentelemetry.io/otel/sdk/resource"
 	semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
 )
 
 type ResourceGenerator struct {
-	Services   []attr.Service
-	SessionIDs []string
+	Services []attrresource.Service
 }
 
 func NewResource() *ResourceGenerator {
 	return &ResourceGenerator{
-		Services: attr.GenerateServiceMocks(),
-		//SessionIDs: attr.GenerateSessionIDMocks(sessionCount),
+		Services: attrresource.GenerateServiceMocks(),
 	}
 }
 
-func (r *ResourceGenerator) GenerateResource() *resource.Resource {
+type ResourceInfo struct {
+	ServiceName    string
+	ServiceVersion string
+	SessionID      string
+	Platform       attrresource.PlatformType
+}
+
+func (r *ResourceGenerator) GenerateResource() (*resource.Resource, ResourceInfo) {
 	service := r.pickServiceRandom()
-	sessionID := attr.GenerateSessionIDMocks()
+	sessionID := attrresource.GenerateSessionIDMocks()
 
 	rs, err := resource.Merge(
 		resource.Default(),
@@ -32,25 +37,31 @@ func (r *ResourceGenerator) GenerateResource() *resource.Resource {
 			semconv.SchemaURL,
 			semconv.ServiceName(service.Name),
 			semconv.ServiceVersion(service.Version),
-			attr.ServiceKey(service.Key),
-			attr.SessionIDKey(sessionID),
+			attrresource.ServiceKey(service.Key),
+			attrresource.ServicePlatform(service.Platform),
+			attrresource.SessionIDKey(sessionID),
 		),
 	)
 	if err != nil {
 		fmt.Printf("failed to generate resource: %v", err)
-		return nil
+		return nil, ResourceInfo{}
 	}
-	return rs
+	return rs, ResourceInfo{
+		ServiceName:    service.Name,
+		ServiceVersion: service.Version,
+		SessionID:      sessionID,
+		Platform:       service.Platform,
+	}
 }
 
-func (r *ResourceGenerator) pickService(n int) attr.Service {
+func (r *ResourceGenerator) pickService(n int) attrresource.Service {
 	return r.Services[n]
 }
 
-func (r *ResourceGenerator) pickServiceRandom() attr.Service {
+func (r *ResourceGenerator) pickServiceRandom() attrresource.Service {
 	return r.Services[rand.Intn(len(r.Services))]
 }
 
-func (r *ResourceGenerator) pickSessionIDRandom() string {
-	return r.SessionIDs[rand.Intn(len(r.SessionIDs))]
+func (s ResourceInfo) String() string {
+	return fmt.Sprintf("%s@%s::%s::%s", s.ServiceName, s.ServiceVersion, s.Platform, s.SessionID)
 }

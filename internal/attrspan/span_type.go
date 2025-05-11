@@ -1,4 +1,4 @@
-package attr
+package attrspan
 
 import "go.opentelemetry.io/otel/attribute"
 
