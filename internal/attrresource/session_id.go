@@ -8,11 +8,11 @@ import (
 )
 
 const (
-	ResourceSessionIDKey = attribute.Key("session.id")
+	ResourceAttributeSessionIDKey = attribute.Key("session.id")
 )
 
 func SessionIDKey(val string) attribute.KeyValue {
-	return ResourceSessionIDKey.String(val)
+	return ResourceAttributeSessionIDKey.String(val)
 }
 
 func GenerateSessionIDMocks() string {

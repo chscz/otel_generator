@@ -25,12 +25,12 @@ func main() {
 	e := exporter.NewExporter(mainCtx, cfg.CollectorURL)
 	defer e.Shutdown()
 
-	resourceGenerator := generator.NewResource()
+	resourceGenerator := generator.NewResource(cfg.Services)
 
 	var wg sync.WaitGroup
 	for i := 0; i < cfg.GoroutineCount; i++ {
 		wg.Add(1)
-		tg := generator.NewTraceGenerator(i, e.Exp, resourceGenerator)
+		tg := generator.NewTraceGenerator(i, e.Exp, resourceGenerator, cfg)
 		go tg.Start(mainCtx, &wg)
 	}
 

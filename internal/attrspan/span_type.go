@@ -1,11 +1,21 @@
 package attrspan
 
-import "go.opentelemetry.io/otel/attribute"
+import (
+	"math/rand"
 
-const SpanSpanTypeKey = attribute.Key("span.type")
+	"go.opentelemetry.io/otel/attribute"
+)
 
-func SpanTypeKey(val string) attribute.KeyValue {
-	return SpanSpanTypeKey.String(val)
+const SpanAttributeSpanTypeKey = attribute.Key("span.type")
+
+func (sg *SpanAttrGenerator) SpanTypeKey(val string) attribute.KeyValue {
+	return SpanAttributeSpanTypeKey.String(val)
+}
+
+func (sg *SpanAttrGenerator) SpanTypeRandomGenerate() attribute.KeyValue {
+	spanTypes := GenerateSpanTypeMocks()
+	spanType := spanTypes[rand.Intn(len(spanTypes))]
+	return SpanAttributeSpanTypeKey.String(string(spanType))
 }
 
 type SpanAttrSpanType string

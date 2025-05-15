@@ -14,9 +14,9 @@ type ResourceGenerator struct {
 	Services []attrresource.Service
 }
 
-func NewResource() *ResourceGenerator {
+func NewResource(services []attrresource.Service) *ResourceGenerator {
 	return &ResourceGenerator{
-		Services: attrresource.GenerateServiceMocks(),
+		Services: services,
 	}
 }
 

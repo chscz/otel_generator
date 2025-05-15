@@ -1,10 +1,9 @@
 package generator
 
 import (
-	"math/rand"
-
 	"otel-generator/internal/attrresource"
 	"otel-generator/internal/attrspan"
+	"otel-generator/internal/config"
 
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
@@ -13,19 +12,25 @@ import (
 var tracer = otel.Tracer("otel-generator")
 
 type SpanGenerator struct {
-	tracer      trace.Tracer
-	platform    attrresource.PlatformType
-	SpanTypes   []attrspan.SpanAttrSpanType
-	HTTPMethods []attrspan.SpanAttrHTTPMethod
-	Platform    attrresource.PlatformType
+	//tracer   trace.Tracer
+	platform attrresource.PlatformType
+	//SpanTypes   []attrspan.SpanAttrSpanType
+	//HTTPMethods []attrspan.SpanAttrHTTPMethod
+	//Platform    attrresource.PlatformType
+	attrGenerator *attrspan.SpanAttrGenerator
+	userID        string
 }
 
-func NewSpanGeneratorWithTracer(tracer trace.Tracer, platform attrresource.PlatformType) *SpanGenerator {
+func NewSpanGeneratorWithTracer(platform attrresource.PlatformType, cfg *config.Config) *SpanGenerator {
+	attrGen := attrspan.NewSpanAttrGenerator(cfg.SpanAttributes.ScreenNames, cfg.SpanAttributes.HTTPURLs, cfg.UserCount)
+
 	return &SpanGenerator{
-		tracer:      tracer,
-		platform:    platform,
-		SpanTypes:   attrspan.GenerateSpanTypeMocks(),
-		HTTPMethods: attrspan.GenerateHTTPMethodMocks(),
+		//tracer:   tracer,
+		platform: platform,
+		//SpanTypes:   attrspan.GenerateSpanTypeMocks(),
+		//HTTPMethods: attrspan.GenerateHTTPMethodMocks(),
+		attrGenerator: attrGen,
+		userID:        attrGen.GetRandomUserID(),
 	}
 }
 
@@ -41,18 +46,19 @@ func NewSpanGeneratorWithTracer(tracer trace.Tracer, platform attrresource.Platf
 //	return &span
 //}
 
-func (s *SpanGenerator) pickSpanTypeRandom() string {
-	return string(s.SpanTypes[rand.Intn(len(s.SpanTypes))])
-}
-
-func (s *SpanGenerator) pickHTTPMethodRandom() string {
-	return string(s.HTTPMethods[rand.Intn(len(s.HTTPMethods))])
-}
+//func (s *SpanGenerator) pickSpanTypeRandom() string {
+//	return string(s.SpanTypes[rand.Intn(len(s.SpanTypes))])
+//}
+//
+//func (s *SpanGenerator) pickHTTPMethodRandom() string {
+//	return string(s.HTTPMethods[rand.Intn(len(s.HTTPMethods))])
+//}
 
 func (s *SpanGenerator) PopulateSpanAttributes(span trace.Span) {
 	span.SetAttributes(
-		attrspan.SpanTypeKey(s.pickSpanTypeRandom()),
-		attrspan.HTTPMethodKey(s.pickHTTPMethodRandom()),
+		s.attrGenerator.SpanTypeRandomGenerate(),
+		s.attrGenerator.UserIDKey(s.userID),
+		s.attrGenerator.ScreenNameRandomGenerate(),
 	)
 }
 

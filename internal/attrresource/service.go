@@ -11,23 +11,23 @@ const (
 )
 
 type Service struct {
-	Name     string
-	Version  string
-	Key      string
-	Platform PlatformType
+	Name     string       `yaml:"name"`
+	Version  string       `yaml:"version"`
+	Key      string       `yaml:"key"`
+	Platform PlatformType `yaml:"platform"`
 }
 
 const (
-	ResourceServiceKey      = attribute.Key("service.key")
-	ResourceServicePlatform = attribute.Key("service.platform")
+	ResourceAttributeServiceKey      = attribute.Key("service.key")
+	ResourceAttributeServicePlatform = attribute.Key("service.platform")
 )
 
 func ServicePlatform(val PlatformType) attribute.KeyValue {
-	return ResourceServicePlatform.String(string(val))
+	return ResourceAttributeServicePlatform.String(string(val))
 }
 
 func ServiceKey(val string) attribute.KeyValue {
-	return ResourceServiceKey.String(val)
+	return ResourceAttributeServiceKey.String(val)
 }
 
 func GenerateServiceMocks() []Service {

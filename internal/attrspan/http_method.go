@@ -1,11 +1,22 @@
 package attrspan
 
-import "go.opentelemetry.io/otel/attribute"
+import (
+	"math/rand"
+
+	"go.opentelemetry.io/otel/attribute"
+	semconv "go.opentelemetry.io/otel/semconv/v1.25.0"
+)
 
 const SpanHTTPMethodKey = attribute.Key("http.method")
 
-func HTTPMethodKey(val string) attribute.KeyValue {
+func (sg *SpanAttrGenerator) HTTPMethodKey(val string) attribute.KeyValue {
 	return SpanHTTPMethodKey.String(val)
+}
+
+func (sg *SpanAttrGenerator) HTTPMethodRandomGenerate() attribute.KeyValue {
+	methods := GenerateHTTPMethodMocks()
+	method := methods[rand.Intn(len(methods))]
+	return semconv.HTTPMethod(string(method))
 }
 
 type SpanAttrHTTPMethod string
