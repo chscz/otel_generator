@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"math/rand"
 	"sync"
 	"time"
 
@@ -15,7 +14,7 @@ import (
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 )
 
-const traceIntervalSeconds = 5
+const traceIntervalSeconds = 10
 
 type TraceGenerator struct {
 	routineID   int
@@ -33,7 +32,7 @@ func NewTraceGenerator(routineID int, exporter *otlptrace.Exporter, resGen *Reso
 		return nil
 	}
 
-	spanGen := NewSpanGeneratorWithTracer(serviceInfo.Platform, cfg)
+	spanGen := NewSpanGenerator(serviceInfo.Platform, cfg)
 
 	tp := sdktrace.NewTracerProvider(sdktrace.WithBatcher(exporter), sdktrace.WithResource(resource))
 
@@ -47,11 +46,12 @@ func NewTraceGenerator(routineID int, exporter *otlptrace.Exporter, resGen *Reso
 	}
 }
 
-func (tg *TraceGenerator) Start(parentCtx context.Context, wg *sync.WaitGroup) {
+func (tg *TraceGenerator) Start(mainCtx context.Context, wg *sync.WaitGroup) {
 	defer wg.Done()
 	defer tg.Shutdown()
 
 	tracer := tg.tp.Tracer(fmt.Sprintf("otel-generator-periodic-worker-%d", tg.routineID))
+	tg.spanGen.tracer = tracer
 
 	ticker := time.NewTicker(time.Duration(traceIntervalSeconds) * time.Second)
 	defer ticker.Stop()
@@ -59,22 +59,22 @@ func (tg *TraceGenerator) Start(parentCtx context.Context, wg *sync.WaitGroup) {
 
 	for {
 		select {
-		case <-parentCtx.Done():
+		case <-mainCtx.Done():
 			log.Printf("Goroutine %d: 종료 신호 수신 (Resource: %s). Trace 전송 중단.", tg.routineID, tg.serviceInfo.String())
 			return
 
 		case <-ticker.C:
-			spanName := "periodic-simulated-task"
-			taskCtx, rootSpan := tracer.Start(parentCtx, spanName)
-			tg.spanGen.PopulateSpanAttributes(rootSpan)
-			time.Sleep(time.Duration(50+rand.Intn(100)) * time.Millisecond)
+			tg.spanGen.GenerateTrace(mainCtx)
+			//spanName := "periodic-simulated-task"
+			//taskCtx, rootSpan := tracer.Start(mainCtx, spanName)
+			//tg.spanGen.populateSpanAttributes(rootSpan)
+			//time.Sleep(time.Duration(50+rand.Intn(100)) * time.Millisecond)
+			//
+			//_, childSpan := tracer.Start(taskCtx, "sub-task-in-periodic-job")
+			//time.Sleep(time.Duration(20+rand.Intn(50)) * time.Millisecond)
+			//childSpan.End()
 
-			_, childSpan := tracer.Start(taskCtx, "sub-task-in-periodic-job")
-			time.Sleep(time.Duration(20+rand.Intn(50)) * time.Millisecond)
-			childSpan.End()
-
-			rootSpan.End()
-			log.Printf("Goroutine %d: Resource(%s) - Trace (%s) 전송 완료.", tg.routineID, tg.serviceInfo.String(), rootSpan.SpanContext().TraceID().String())
+			//log.Printf("Goroutine %d: Resource(%s) - Trace (%s) 전송 완료.", tg.routineID, tg.serviceInfo.String(), rootSpan.SpanContext().TraceID().String())
 		}
 	}
 }

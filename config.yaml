@@ -5,6 +5,7 @@ collector_url: "http://localhost:4318"
 user_count: 10
 
 services:
+  # ios
   - name: "test-service-ios-1"
     version: "1.0.1"
     key: "service-key"
@@ -21,7 +22,7 @@ services:
     version: "1.0.11"
     key: "service-key"
     platform: "ios"
-
+  # android
   - name: "test-service-android-1"
     version: "1.3.5"
     key: "service-key"
@@ -38,7 +39,7 @@ services:
     version: "1.0.4"
     key: "service-key"
     platform: "android"
-
+  # web
   - name: "test-service-web-1"
     version: "3.0.11"
     key: "service-key"

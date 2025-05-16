@@ -1,71 +1,83 @@
 package generator
 
 import (
+	"context"
+
 	"otel-generator/internal/attrresource"
 	"otel-generator/internal/attrspan"
 	"otel-generator/internal/config"
+	"otel-generator/internal/spanaction"
 
-	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
 )
 
-var tracer = otel.Tracer("otel-generator")
-
 type SpanGenerator struct {
-	//tracer   trace.Tracer
-	platform attrresource.PlatformType
-	//SpanTypes   []attrspan.SpanAttrSpanType
-	//HTTPMethods []attrspan.SpanAttrHTTPMethod
-	//Platform    attrresource.PlatformType
+	tracer        trace.Tracer
+	platform      attrresource.PlatformType
 	attrGenerator *attrspan.SpanAttrGenerator
 	userID        string
+	actionGen     *spanaction.ActionGenerator
 }
 
-func NewSpanGeneratorWithTracer(platform attrresource.PlatformType, cfg *config.Config) *SpanGenerator {
-	attrGen := attrspan.NewSpanAttrGenerator(cfg.SpanAttributes.ScreenNames, cfg.SpanAttributes.HTTPURLs, cfg.UserCount)
+func NewSpanGenerator(platform attrresource.PlatformType, cfg *config.Config) *SpanGenerator {
+	spanAttrGen := attrspan.NewSpanAttrGenerator(cfg.SpanAttributes.ScreenNames, cfg.SpanAttributes.HTTPURLs, cfg.UserCount)
 
 	return &SpanGenerator{
-		//tracer:   tracer,
-		platform: platform,
-		//SpanTypes:   attrspan.GenerateSpanTypeMocks(),
-		//HTTPMethods: attrspan.GenerateHTTPMethodMocks(),
-		attrGenerator: attrGen,
-		userID:        attrGen.GetRandomUserID(),
+		platform:      platform,
+		attrGenerator: spanAttrGen,
+		userID:        spanAttrGen.GetRandomUserID(),
+		actionGen:     spanaction.NewActionGenerator(spanAttrGen),
 	}
 }
 
-//func (s *SpanGenerator) GenerateSpan() *trace.Span {
-//	_, span := tracer.Start(context.Background(), "test-name")
-//	defer span.End()
-//
-//	span.SetAttributes(
-//		attrspan.SpanTypeKey(s.pickSpanTypeRandom()),
-//		attrspan.HTTPMethodKey(s.pickHTTPMethodRandom()),
-//	)
-//
-//	return &span
-//}
+func (s *SpanGenerator) GenerateTrace(mainCtx context.Context) {
+	parentCtx, rootSpan := s.GenerateParentSpan(mainCtx)
 
-//func (s *SpanGenerator) pickSpanTypeRandom() string {
-//	return string(s.SpanTypes[rand.Intn(len(s.SpanTypes))])
-//}
-//
-//func (s *SpanGenerator) pickHTTPMethodRandom() string {
-//	return string(s.HTTPMethods[rand.Intn(len(s.HTTPMethods))])
-//}
-
-func (s *SpanGenerator) PopulateSpanAttributes(span trace.Span) {
-	span.SetAttributes(
-		s.attrGenerator.SpanTypeRandomGenerate(),
-		s.attrGenerator.UserIDKey(s.userID),
-		s.attrGenerator.ScreenNameRandomGenerate(),
-	)
+	for i := 0; i < 5; i++ {
+		childSpan := s.GenerateChildSpan(parentCtx)
+		childSpan.End()
+	}
+	rootSpan.End()
 }
 
-//func (s *SpanGenerator) CreateAndEndExampleSpan(ctx context.Context, name string) {
-//	// s.tracer는 NewSpanGeneratorWithTracer를 통해 주입된 tracer 사용
-//	_, span := s.tracer.Start(ctx, name)
-//	defer span.End() // 함수 종료 시 Span 종료
-//
-//	s.PopulateSpanAttributes(span) // 위에서 정의한 속성 채우기 메서드 사용
-//}
+func (s *SpanGenerator) GenerateParentSpan(parentCtx context.Context) (context.Context, trace.Span) {
+	spanName := "root_span_name"
+	attrSpanType := attrspan.SpanAttrSpanType(s.attrGenerator.SpanTypeRandomGenerate().Value.AsString())
+
+	var taskCtx context.Context
+	var rootSpan trace.Span
+	if attrSpanType == attrspan.SpanAttrSpanTypeXHR {
+		taskCtx, rootSpan = s.tracer.Start(parentCtx, spanName, trace.WithSpanKind(trace.SpanKindClient))
+	} else {
+		taskCtx, rootSpan = s.tracer.Start(parentCtx, spanName)
+	}
+
+	_ = s.populateSpanAttributes(rootSpan)
+
+	switch attrSpanType {
+	case attrspan.SpanAttrSpanTypeANR:
+	case attrspan.SpanAttrSpanTypeCrash:
+	case attrspan.SpanAttrSpanTypeError:
+	case attrspan.SpanAttrSpanTypeEvent:
+	case attrspan.SpanAttrSpanTypeLog:
+	case attrspan.SpanAttrSpanTypeRender:
+	case attrspan.SpanAttrSpanTypeXHR:
+		s.actionGen.XHR.Generate(taskCtx, rootSpan)
+	case attrspan.SpanAttrSpanTypeWebVitals:
+	default:
+
+	}
+
+	return taskCtx, rootSpan
+
+}
+
+func (s *SpanGenerator) GenerateChildSpan(parentCtx context.Context) trace.Span {
+	_, childSpan := s.tracer.Start(parentCtx, "child_span_name")
+	s.populateSpanAttributes(childSpan)
+	return childSpan
+}
+
+func (s *SpanGenerator) populateSpanAttributes(span trace.Span) attrspan.SpanAttrSpanType {
+	return s.attrGenerator.PopulateSpanAttributes(span, s.userID)
+}

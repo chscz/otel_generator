@@ -32,6 +32,7 @@ const (
 )
 
 func GenerateSpanTypeMocks() []SpanAttrSpanType {
+
 	return []SpanAttrSpanType{
 		SpanAttrSpanTypeRender,
 		SpanAttrSpanTypeXHR,

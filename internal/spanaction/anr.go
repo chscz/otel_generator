@@ -3,7 +3,6 @@ package spanaction
 import "go.opentelemetry.io/otel/attribute"
 
 type AnrAttribute interface {
-	HTTPMethodKey(val string) attribute.KeyValue
 	SpanTypeKey(val string) attribute.KeyValue
 }
 type Anr struct {
@@ -16,6 +15,6 @@ func NewAnr(attrGenerator AnrAttribute) *Anr {
 	}
 }
 
-func (a *Anr) HTTPMethodKey(val string) attribute.KeyValue {
-	return a.Attr.HTTPMethodKey(val)
+func (a *Anr) SpanTypeKey(val string) attribute.KeyValue {
+	return a.Attr.SpanTypeKey(val)
 }
