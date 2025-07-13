@@ -1,4 +1,4 @@
-package attrresource
+package attrspan
 
 import (
 	"encoding/hex"
@@ -8,14 +8,14 @@ import (
 )
 
 const (
-	ResourceAttributeSessionIDKey = attribute.Key("session.id")
+	SpanAttributeSessionIDKey = attribute.Key("session.id")
 )
 
 func SessionIDKey(val string) attribute.KeyValue {
-	return ResourceAttributeSessionIDKey.String(val)
+	return SpanAttributeSessionIDKey.String(val)
 }
 
-func GenerateSessionIDMocks() string {
+func GenerateSessionIDMock() string {
 	id := uuid.New()
 	return hex.EncodeToString(id[:])
 }

@@ -8,8 +8,8 @@ import (
 
 const SpanAttributeSpanTypeKey = attribute.Key("span.type")
 
-func (sg *SpanAttrGenerator) SpanTypeKey(val string) attribute.KeyValue {
-	return SpanAttributeSpanTypeKey.String(val)
+func (sg *SpanAttrGenerator) SpanTypeKey(val SpanAttrSpanType) attribute.KeyValue {
+	return SpanAttributeSpanTypeKey.String(string(val))
 }
 
 func (sg *SpanAttrGenerator) SpanTypeRandomGenerate() attribute.KeyValue {
@@ -21,14 +21,14 @@ func (sg *SpanAttrGenerator) SpanTypeRandomGenerate() attribute.KeyValue {
 type SpanAttrSpanType string
 
 const (
-	SpanAttrSpanTypeRender    = "render"
-	SpanAttrSpanTypeXHR       = "xhr"
-	SpanAttrSpanTypeCrash     = "crash"
-	SpanAttrSpanTypeEvent     = "event"
-	SpanAttrSpanTypeANR       = "anr"
-	SpanAttrSpanTypeError     = "error"
-	SpanAttrSpanTypeWebVitals = "webvitals"
-	SpanAttrSpanTypeLog       = "log"
+	SpanAttrSpanTypeRender    SpanAttrSpanType = "render"
+	SpanAttrSpanTypeXHR       SpanAttrSpanType = "xhr"
+	SpanAttrSpanTypeCrash     SpanAttrSpanType = "crash"
+	SpanAttrSpanTypeEvent     SpanAttrSpanType = "event"
+	SpanAttrSpanTypeANR       SpanAttrSpanType = "anr"
+	SpanAttrSpanTypeError     SpanAttrSpanType = "error"
+	SpanAttrSpanTypeWebVitals SpanAttrSpanType = "webvitals"
+	SpanAttrSpanTypeLog       SpanAttrSpanType = "log"
 )
 
 func GenerateSpanTypeMocks() []SpanAttrSpanType {

@@ -32,7 +32,7 @@ func NewTraceGenerator(routineID int, exporter *otlptrace.Exporter, resGen *Reso
 		return nil
 	}
 
-	spanGen := NewSpanGenerator(serviceInfo.Platform, cfg)
+	spanGen := NewSpanGenerator(serviceInfo.ServiceType, cfg)
 
 	tp := sdktrace.NewTracerProvider(sdktrace.WithBatcher(exporter), sdktrace.WithResource(resource))
 
@@ -67,7 +67,7 @@ func (tg *TraceGenerator) Start(mainCtx context.Context, wg *sync.WaitGroup) {
 			tg.spanGen.GenerateTrace(mainCtx)
 			//spanName := "periodic-simulated-task"
 			//taskCtx, rootSpan := tracer.Start(mainCtx, spanName)
-			//tg.spanGen.populateSpanAttributes(rootSpan)
+			//tg.spanGen.setPopulateSpanAttributes(rootSpan)
 			//time.Sleep(time.Duration(50+rand.Intn(100)) * time.Millisecond)
 			//
 			//_, childSpan := tracer.Start(taskCtx, "sub-task-in-periodic-job")

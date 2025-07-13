@@ -7,11 +7,11 @@ import (
 
 func TelemetrySDKLanguage(val string) attribute.KeyValue {
 	switch val {
-	case PlatformTypeAndroid:
+	case ServiceTypeAndroid:
 		return semconv.TelemetrySDKLanguageJava
-	case PlatformTypeIOS:
+	case ServiceTypeIOS:
 		return semconv.TelemetrySDKLanguageSwift
-	case PlatformTypeWeb:
+	case ServiceTypeWeb:
 		return semconv.TelemetrySDKLanguageNodejs
 	default:
 		return semconv.TelemetrySDKLanguageKey.String("unknown")

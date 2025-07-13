@@ -3,6 +3,8 @@ package attrspan
 import (
 	"math/rand"
 
+	"otel-generator/internal/attrresource"
+
 	"go.opentelemetry.io/otel/attribute"
 )
 
@@ -13,23 +15,33 @@ func (sg *SpanAttrGenerator) ScreenTypeKey(val string) attribute.KeyValue {
 }
 
 func (sg *SpanAttrGenerator) ScreenTypeRandomGenerate() attribute.KeyValue {
-	screenTypes := GenerateScreenTypeMocks()
+	screenTypeMap := GenerateScreenTypeMocks()
+	screenTypes := screenTypeMap[sg.ServiceType]
 	screenType := screenTypes[rand.Intn(len(screenTypes))]
-	return SpanAttributeScreenTypeKey.String(string(screenType))
+	return SpanAttributeScreenTypeKey.String(screenType)
 }
 
+type SpanAttrScreenTypeMap map[attrresource.ServiceType][]string
 type SpanAttrScreenType string
 
 const (
 	SpanAttrScreenTypePage        = "page"
 	SpanAttrScreenTypeView        = "view"
+	SpanAttrScreenTypeActivity    = "activity"
+	SpanAttrScreenTypeFragment    = "fragment"
 	SpanAttrScreenTypeUnspecified = ""
 )
 
-func GenerateScreenTypeMocks() []SpanAttrScreenType {
-	return []SpanAttrScreenType{
-		SpanAttrScreenTypePage,
-		SpanAttrScreenTypeView,
-		//SpanAttrScreenTypeUnspecified,
+func GenerateScreenTypeMocks() SpanAttrScreenTypeMap {
+	return SpanAttrScreenTypeMap{
+		attrresource.ServiceTypeAndroid: []string{
+			SpanAttrScreenTypeActivity,
+			SpanAttrScreenTypeFragment,
+		},
+		attrresource.ServiceTypeIOS: []string{
+			SpanAttrScreenTypePage,
+			SpanAttrScreenTypeView,
+		},
+		attrresource.ServiceTypeWeb: []string{},
 	}
 }

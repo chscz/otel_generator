@@ -23,13 +23,11 @@ func NewResource(services []attrresource.Service) *ResourceGenerator {
 type ResourceInfo struct {
 	ServiceName    string
 	ServiceVersion string
-	SessionID      string
-	Platform       attrresource.PlatformType
+	ServiceType    attrresource.ServiceType
 }
 
 func (r *ResourceGenerator) GenerateResource() (*resource.Resource, ResourceInfo) {
 	service := r.pickServiceRandom()
-	sessionID := attrresource.GenerateSessionIDMocks()
 
 	rs, err := resource.Merge(
 		resource.Default(),
@@ -38,8 +36,7 @@ func (r *ResourceGenerator) GenerateResource() (*resource.Resource, ResourceInfo
 			semconv.ServiceName(service.Name),
 			semconv.ServiceVersion(service.Version),
 			attrresource.ServiceKey(service.Key),
-			attrresource.ServicePlatform(service.Platform),
-			attrresource.SessionIDKey(sessionID),
+			attrresource.SetServiceTypeAttr(service.Type),
 		),
 	)
 	if err != nil {
@@ -49,8 +46,7 @@ func (r *ResourceGenerator) GenerateResource() (*resource.Resource, ResourceInfo
 	return rs, ResourceInfo{
 		ServiceName:    service.Name,
 		ServiceVersion: service.Version,
-		SessionID:      sessionID,
-		Platform:       service.Platform,
+		ServiceType:    service.Type,
 	}
 }
 
@@ -63,5 +59,5 @@ func (r *ResourceGenerator) pickServiceRandom() attrresource.Service {
 }
 
 func (s ResourceInfo) String() string {
-	return fmt.Sprintf("%s@%s::%s::%s", s.ServiceName, s.ServiceVersion, s.Platform, s.SessionID)
+	return fmt.Sprintf("%s@%s::%s", s.ServiceName, s.ServiceVersion, s.ServiceType)
 }
