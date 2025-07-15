@@ -14,14 +14,6 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-type InheritedSpanAttr struct {
-	//SessionID  attribute.KeyValue
-	UserID     attribute.KeyValue
-	SpanType   attribute.KeyValue
-	ScreenName attribute.KeyValue
-	ScreenType attribute.KeyValue
-}
-
 type SpanGenerator struct {
 	tracer        trace.Tracer
 	serviceType   attrresource.ServiceType
@@ -57,7 +49,7 @@ func (s *SpanGenerator) GenerateTrace(mainCtx context.Context) {
 	rootSpan.End()
 }
 
-func (s *SpanGenerator) GenerateParentSpan(parentCtx context.Context) (context.Context, trace.Span, InheritedSpanAttr) {
+func (s *SpanGenerator) GenerateParentSpan(parentCtx context.Context) (context.Context, trace.Span, attrspan.InheritedSpanAttr) {
 	attrSpanType := attrspan.SpanAttrSpanType(s.attrGenerator.SpanTypeRandomGenerate().Value.AsString())
 
 	var attrs []attribute.KeyValue
@@ -83,7 +75,7 @@ func (s *SpanGenerator) GenerateParentSpan(parentCtx context.Context) (context.C
 		rootSpan.SetAttributes(attrs...)
 	}
 
-	inheritedAttr := s.setPopulateSpanAttributes(rootSpan, attrSpanType)
+	inheritedAttr := s.setPopulateParentSpanAttributes(rootSpan, attrSpanType)
 
 	//switch attrSpanType {
 	//case attrspan.SpanAttrSpanTypeANR:
@@ -103,14 +95,18 @@ func (s *SpanGenerator) GenerateParentSpan(parentCtx context.Context) (context.C
 
 }
 
-func (s *SpanGenerator) GenerateChildSpan(parentCtx context.Context, attr InheritedSpanAttr) trace.Span {
+func (s *SpanGenerator) GenerateChildSpan(parentCtx context.Context, attr attrspan.InheritedSpanAttr) trace.Span {
 	_, childSpan := s.tracer.Start(parentCtx, "child_span_name")
-	s.setPopulateSpanAttributes(childSpan)
+	s.setPopulateChildSpanAttributes(childSpan, attr)
 	return childSpan
 }
 
-func (s *SpanGenerator) setPopulateSpanAttributes(span trace.Span, spanType attrspan.SpanAttrSpanType) InheritedSpanAttr {
-	return s.attrGenerator.SetPopulateSpanAttributes(span, spanType, s.userID)
+func (s *SpanGenerator) setPopulateParentSpanAttributes(span trace.Span, spanType attrspan.SpanAttrSpanType) attrspan.InheritedSpanAttr {
+	return s.attrGenerator.SetPopulateParentSpanAttributes(span, spanType, s.userID)
+}
+
+func (s *SpanGenerator) setPopulateChildSpanAttributes(span trace.Span, attr attrspan.InheritedSpanAttr) {
+	s.attrGenerator.SetPopulateChildSpanAttributes(span, attr)
 }
 
 func makeSpanNameBySpanType(spanType attrspan.SpanAttrSpanType) string {

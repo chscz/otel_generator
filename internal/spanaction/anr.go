@@ -1,9 +1,13 @@
 package spanaction
 
-import "go.opentelemetry.io/otel/attribute"
+import (
+	"otel-generator/internal/attrspan"
+
+	"go.opentelemetry.io/otel/attribute"
+)
 
 type AnrAttribute interface {
-	SpanTypeKey(val string) attribute.KeyValue
+	SpanTypeKey(val attrspan.SpanAttrSpanType) attribute.KeyValue
 }
 type Anr struct {
 	Attr AnrAttribute
@@ -15,6 +19,6 @@ func NewAnr(attrGenerator AnrAttribute) *Anr {
 	}
 }
 
-func (a *Anr) SpanTypeKey(val string) attribute.KeyValue {
+func (a *Anr) SpanTypeKey(val attrspan.SpanAttrSpanType) attribute.KeyValue {
 	return a.Attr.SpanTypeKey(val)
 }

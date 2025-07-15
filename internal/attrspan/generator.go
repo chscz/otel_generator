@@ -2,8 +2,8 @@ package attrspan
 
 import (
 	"otel-generator/internal/attrresource"
-	"otel-generator/internal/generator"
 
+	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 )
 
@@ -31,7 +31,7 @@ func NewSpanAttrGenerator(serviceType attrresource.ServiceType, screenNames Span
 
 	return &SpanAttrGenerator{
 		ServiceType:    serviceType,
-		SessionID:      GenerateSessionIDMocks(),
+		SessionID:      GenerateSessionIDMock(),
 		ScreenName:     sn,
 		HTTPURLs:       httpurls,
 		HTTPMethods:    httpMethods,
@@ -40,21 +40,43 @@ func NewSpanAttrGenerator(serviceType attrresource.ServiceType, screenNames Span
 	}
 }
 
-func (sg *SpanAttrGenerator) SetPopulateSpanAttributes(span trace.Span, spanType SpanAttrSpanType, userID string) generator.InheritedSpanAttr {
+func (sg *SpanAttrGenerator) SetPopulateParentSpanAttributes(span trace.Span, spanType SpanAttrSpanType, userID string) InheritedSpanAttr {
 	attrSpanType := sg.SpanTypeKey(spanType)
 	attrUserID := sg.UserIDKey(userID)
+	attrSessionID := sg.SessionIDKey(sg.SessionID)
 	attrScreenName := sg.ScreenNameRandomGenerate()
 	attrScreenType := sg.ScreenTypeRandomGenerate()
+
 	span.SetAttributes(
 		attrSpanType,
 		attrUserID,
+		attrSessionID,
 		attrScreenName,
 		attrScreenType,
 	)
-	return generator.InheritedSpanAttr{
-		UserID:     attrUserID,
+	return InheritedSpanAttr{
 		SpanType:   attrSpanType,
+		UserID:     attrUserID,
+		SessionID:  attrSessionID,
 		ScreenName: attrScreenName,
 		ScreenType: attrScreenType,
 	}
+}
+
+func (sg *SpanAttrGenerator) SetPopulateChildSpanAttributes(span trace.Span, attr InheritedSpanAttr) {
+	span.SetAttributes(
+		attr.SpanType,
+		attr.UserID,
+		attr.SessionID,
+		attr.ScreenName,
+		attr.ScreenType,
+	)
+}
+
+type InheritedSpanAttr struct {
+	SessionID  attribute.KeyValue
+	UserID     attribute.KeyValue
+	SpanType   attribute.KeyValue
+	ScreenName attribute.KeyValue
+	ScreenType attribute.KeyValue
 }

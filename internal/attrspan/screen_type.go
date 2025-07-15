@@ -16,7 +16,10 @@ func (sg *SpanAttrGenerator) ScreenTypeKey(val string) attribute.KeyValue {
 
 func (sg *SpanAttrGenerator) ScreenTypeRandomGenerate() attribute.KeyValue {
 	screenTypeMap := GenerateScreenTypeMocks()
-	screenTypes := screenTypeMap[sg.ServiceType]
+	screenTypes, ok := screenTypeMap[sg.ServiceType]
+	if !ok || len(screenTypes) == 0 {
+		return attribute.KeyValue{}
+	}
 	screenType := screenTypes[rand.Intn(len(screenTypes))]
 	return SpanAttributeScreenTypeKey.String(screenType)
 }

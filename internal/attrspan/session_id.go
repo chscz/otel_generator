@@ -11,7 +11,7 @@ const (
 	SpanAttributeSessionIDKey = attribute.Key("session.id")
 )
 
-func SessionIDKey(val string) attribute.KeyValue {
+func (sg *SpanAttrGenerator) SessionIDKey(val string) attribute.KeyValue {
 	return SpanAttributeSessionIDKey.String(val)
 }
 

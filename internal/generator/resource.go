@@ -3,6 +3,7 @@ package generator
 import (
 	"fmt"
 	"math/rand"
+	"strings"
 
 	"otel-generator/internal/attrresource"
 
@@ -46,7 +47,7 @@ func (r *ResourceGenerator) GenerateResource() (*resource.Resource, ResourceInfo
 	return rs, ResourceInfo{
 		ServiceName:    service.Name,
 		ServiceVersion: service.Version,
-		ServiceType:    service.Type,
+		ServiceType:    attrresource.ServiceType(strings.ToUpper(string(service.Type))),
 	}
 }
 

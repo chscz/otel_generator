@@ -6,7 +6,7 @@ import (
 )
 
 func TelemetrySDKLanguage(val string) attribute.KeyValue {
-	switch val {
+	switch ServiceType(val) {
 	case ServiceTypeAndroid:
 		return semconv.TelemetrySDKLanguageJava
 	case ServiceTypeIOS:
