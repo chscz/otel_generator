@@ -15,32 +15,32 @@ func (sg *SpanAttrGenerator) HTTPStatusCodeRandomGenerate() attribute.KeyValue {
 	return semconv.HTTPStatusCode(sg.getWeightedRandomHttpStatusCode())
 }
 
-type statusCodeChoice struct {
+type httpStatusCodeChoice struct {
 	Code   int
 	Weight int
 }
 
 func (sg *SpanAttrGenerator) getWeightedRandomHttpStatusCode() int {
 	totalWeight := 0
-	for _, choice := range sg.HTTPStatusCode {
+	for _, choice := range sg.HTTPStatusCodes {
 		totalWeight += choice.Weight
 	}
 
 	r := rand.Intn(totalWeight)
 
 	upto := 0
-	for _, choice := range sg.HTTPStatusCode {
+	for _, choice := range sg.HTTPStatusCodes {
 		if upto+choice.Weight > r {
 			return choice.Code
 		}
 		upto += choice.Weight
 	}
 
-	return sg.HTTPStatusCode[len(sg.HTTPStatusCode)-1].Code
+	return sg.HTTPStatusCodes[len(sg.HTTPStatusCodes)-1].Code
 }
 
-func setWeightedRandomHttpStatusCode() []statusCodeChoice {
-	return []statusCodeChoice{
+func setWeightedRandomHttpStatusCode() []httpStatusCodeChoice {
+	return []httpStatusCodeChoice{
 		{Code: 200, Weight: 60}, // OK
 		{Code: 201, Weight: 5},  // Created
 		{Code: 204, Weight: 5},  // No Content

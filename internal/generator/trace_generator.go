@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"math/rand"
 	"sync"
 	"time"
 
@@ -14,7 +15,10 @@ import (
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 )
 
-const traceIntervalSeconds = 10
+const (
+	traceIntervalMinSeconds = 10
+	traceIntervalMaxSeconds = 60
+)
 
 type TraceGenerator struct {
 	routineID   int
@@ -53,9 +57,10 @@ func (tg *TraceGenerator) Start(mainCtx context.Context, wg *sync.WaitGroup) {
 	tracer := tg.tp.Tracer(fmt.Sprintf("otel-generator-periodic-worker-%d", tg.routineID))
 	tg.spanGen.tracer = tracer
 
-	ticker := time.NewTicker(time.Duration(traceIntervalSeconds) * time.Second)
+	interval := rand.Intn(traceIntervalMaxSeconds-traceIntervalMinSeconds+1) + traceIntervalMinSeconds
+	ticker := time.NewTicker(time.Duration(interval) * time.Second)
 	defer ticker.Stop()
-	log.Printf("Goroutine %d: Resource(%s) Trace 전송 시작 (간격: %d초)", tg.routineID, tg.serviceInfo.String(), traceIntervalSeconds)
+	log.Printf("Goroutine %d: Resource(%s) Trace 전송 시작 (간격: %d초)", tg.routineID, tg.serviceInfo.String(), interval)
 
 	for {
 		select {

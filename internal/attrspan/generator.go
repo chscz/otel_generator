@@ -8,16 +8,20 @@ import (
 )
 
 type SpanAttrGenerator struct {
-	ServiceType    attrresource.ServiceType
-	SessionID      string
-	UserID         []string
-	ScreenName     []string
-	HTTPURLs       []string
-	HTTPMethods    []string
-	HTTPStatusCode []statusCodeChoice
+	ServiceType          attrresource.ServiceType
+	SpanTypes            []spanTypeChoice
+	SessionID            string
+	UserIDs              []string
+	ScreenNames          []string
+	HTTPURLs             []string
+	HTTPMethods          []httpMethodChoice
+	HTTPStatusCodes      []httpStatusCodeChoice
+	ExceptionTypes       []string
+	ExceptionMessages    []string
+	ExceptionStackTraces []string
 }
 
-func NewSpanAttrGenerator(serviceType attrresource.ServiceType, screenNames SpanAttributeScreenName, httpurls, httpMethods []string, userCount int) *SpanAttrGenerator {
+func NewSpanAttrGenerator(serviceType attrresource.ServiceType, screenNames SpanAttributeScreenName, httpurls, exceptionTypes, exceptionMessages, exceptionStackTraces []string, userCount int) *SpanAttrGenerator {
 	var sn []string
 	switch serviceType {
 	case attrresource.ServiceTypeAndroid:
@@ -30,13 +34,17 @@ func NewSpanAttrGenerator(serviceType attrresource.ServiceType, screenNames Span
 	}
 
 	return &SpanAttrGenerator{
-		ServiceType:    serviceType,
-		SessionID:      GenerateSessionIDMock(),
-		ScreenName:     sn,
-		HTTPURLs:       httpurls,
-		HTTPMethods:    httpMethods,
-		UserID:         GenerateUserIDMocks(userCount),
-		HTTPStatusCode: setWeightedRandomHttpStatusCode(),
+		ServiceType:          serviceType,
+		SpanTypes:            setWeightedRandomSpanType(),
+		SessionID:            GenerateSessionIDMock(),
+		ScreenNames:          sn,
+		UserIDs:              GenerateUserIDMocks(userCount),
+		HTTPURLs:             httpurls,
+		HTTPMethods:          setWeightedRandomHttpMethod(),
+		HTTPStatusCodes:      setWeightedRandomHttpStatusCode(),
+		ExceptionTypes:       exceptionTypes,
+		ExceptionMessages:    exceptionMessages,
+		ExceptionStackTraces: exceptionStackTraces,
 	}
 }
 

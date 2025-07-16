@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
 )
 
 type XHRAttribute interface {
@@ -26,41 +25,40 @@ func NewXHR(attrGenerator XHRAttribute) *XHR {
 	}
 }
 
-func (x *XHR) SetSpanAttribute(span trace.Span) {
-	span.SetAttributes()
-	span.SetAttributes(x.HTTPURLRandomGenerate()...)
-}
+//func (x *XHR) SetSpanAttribute(span trace.Span) {
+//	span.SetAttributes(x.HTTPURLRandomGenerate()...)
+//}
 
 func (x *XHR) Generate() ([]attribute.KeyValue, string) {
-	method := x.HTTPMethodRandomGenerate()
+	method := x.Attr.HTTPMethodRandomGenerate()
 	attrs := []attribute.KeyValue{
 		method,
-		x.HTTPStatusCodeRandomGenerate(),
+		x.Attr.HTTPStatusCodeRandomGenerate(),
 	}
-	attrs = append(attrs, x.HTTPURLRandomGenerate()...)
+	attrs = append(attrs, x.Attr.HTTPURLRandomGenerate()...)
 	return attrs, fmt.Sprintf("http %s", method.Value.AsString())
 }
 
-func (x *XHR) HTTPMethodKey(val string) attribute.KeyValue {
-	return x.Attr.HTTPMethodKey(val)
-}
+//func (x *XHR) HTTPMethodKey(val string) attribute.KeyValue {
+//	return x.Attr.HTTPMethodKey(val)
+//}
 
-func (x *XHR) HTTPMethodRandomGenerate() attribute.KeyValue {
-	return x.Attr.HTTPMethodRandomGenerate()
-}
+//func (x *XHR) HTTPMethodRandomGenerate() attribute.KeyValue {
+//	return x.Attr.HTTPMethodRandomGenerate()
+//}
 
-func (x *XHR) HTTPURLKey(url, host, method string) []attribute.KeyValue {
-	return x.Attr.HTTPURLKey(url, host, method)
-}
+//func (x *XHR) HTTPURLKey(url, host, method string) []attribute.KeyValue {
+//	return x.Attr.HTTPURLKey(url, host, method)
+//}
 
-func (x *XHR) HTTPURLRandomGenerate() []attribute.KeyValue {
-	return x.Attr.HTTPURLRandomGenerate()
-}
+//func (x *XHR) HTTPURLRandomGenerate() []attribute.KeyValue {
+//	return x.Attr.HTTPURLRandomGenerate()
+//}
 
-func (x *XHR) HTTPStatusCodeKey(val int) attribute.KeyValue {
-	return x.Attr.HTTPStatusCodeKey(val)
-}
+//func (x *XHR) HTTPStatusCodeKey(val int) attribute.KeyValue {
+//	return x.Attr.HTTPStatusCodeKey(val)
+//}
 
-func (x *XHR) HTTPStatusCodeRandomGenerate() attribute.KeyValue {
-	return x.Attr.HTTPStatusCodeRandomGenerate()
-}
+//func (x *XHR) HTTPStatusCodeRandomGenerate() attribute.KeyValue {
+//	return x.Attr.HTTPStatusCodeRandomGenerate()
+//}

@@ -23,7 +23,6 @@ func (sg *SpanAttrGenerator) HTTPURLKey(url, host, method string) []attribute.Ke
 }
 
 func (sg *SpanAttrGenerator) HTTPURLRandomGenerate() []attribute.KeyValue {
-	//urlFull := semconv.URLFull(sg.HTTPURL[rand.Intn(len(sg.HTTPURL))])
 	urlFull := sg.HTTPURLs[rand.Intn(len(sg.HTTPURLs))]
 
 	parsedURL, err := url.Parse(urlFull)
@@ -37,14 +36,11 @@ func (sg *SpanAttrGenerator) HTTPURLRandomGenerate() []attribute.KeyValue {
 		}
 	}
 
-	method := sg.HTTPMethods[rand.Intn(len(sg.HTTPMethods))]
-
 	attrs := []attribute.KeyValue{
 		semconv.URLFull(urlFull),
-		semconv12.HTTPMethodKey.String(method),
 	}
 	if host != "" {
-		attrs = append(attrs, semconv12.HTTPMethodKey.String(host))
+		attrs = append(attrs, semconv12.HTTPHostKey.String(host))
 	}
 
 	return attrs

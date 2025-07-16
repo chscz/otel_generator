@@ -2,7 +2,9 @@ package generator
 
 import (
 	"context"
+	"fmt"
 	"math/rand"
+	"time"
 
 	"otel-generator/internal/attrresource"
 	"otel-generator/internal/attrspan"
@@ -20,30 +22,36 @@ type SpanGenerator struct {
 	attrGenerator *attrspan.SpanAttrGenerator
 	userID        string
 	actionGen     *spanaction.ActionGenerator
+	r             *rand.Rand
 }
 
-func NewSpanGenerator(platform attrresource.ServiceType, cfg *config.Config) *SpanGenerator {
+func NewSpanGenerator(serviceType attrresource.ServiceType, cfg *config.Config) *SpanGenerator {
 	spanAttrGen := attrspan.NewSpanAttrGenerator(
-		platform,
+		serviceType,
 		cfg.SpanAttributes.ScreenNames,
 		cfg.SpanAttributes.HTTPURLs,
-		cfg.SpanAttributes.HTTPMethods,
+		cfg.SpanAttributes.ExceptionTypes,
+		cfg.SpanAttributes.ExceptionMessages,
+		cfg.SpanAttributes.ExceptionStackTraces,
 		cfg.UserCount,
 	)
 
 	return &SpanGenerator{
-		serviceType:   platform,
+		serviceType:   serviceType,
 		attrGenerator: spanAttrGen,
 		userID:        spanAttrGen.GetRandomUserID(),
 		actionGen:     spanaction.NewActionGenerator(spanAttrGen),
+		r:             rand.New(rand.NewSource(time.Now().UnixNano())),
 	}
 }
 
 func (s *SpanGenerator) GenerateTrace(mainCtx context.Context) {
 	parentCtx, rootSpan, inheritedAttr := s.GenerateParentSpan(mainCtx)
 
-	for i := 0; i < rand.Intn(10); i++ {
+	for i := 0; i < s.r.Intn(15); i++ {
 		childSpan := s.GenerateChildSpan(parentCtx, inheritedAttr)
+		randomDelay := time.Duration(s.r.Intn(321)) * time.Millisecond
+		time.Sleep(randomDelay)
 		childSpan.End()
 	}
 	rootSpan.End()
@@ -57,6 +65,10 @@ func (s *SpanGenerator) GenerateParentSpan(parentCtx context.Context) (context.C
 	switch attrSpanType {
 	case attrspan.SpanAttrSpanTypeXHR:
 		attrs, spanName = s.actionGen.XHR.Generate()
+	case attrspan.SpanAttrSpanTypeCrash:
+		attrs, spanName = s.actionGen.Crash.Generate()
+	default:
+		spanName = fmt.Sprintf("this is parent span: %s", attrSpanType)
 	}
 
 	var taskCtx context.Context
@@ -92,7 +104,6 @@ func (s *SpanGenerator) GenerateParentSpan(parentCtx context.Context) (context.C
 	//}
 
 	return taskCtx, rootSpan, inheritedAttr
-
 }
 
 func (s *SpanGenerator) GenerateChildSpan(parentCtx context.Context, attr attrspan.InheritedSpanAttr) trace.Span {

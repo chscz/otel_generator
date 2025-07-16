@@ -2,6 +2,7 @@ package attrspan
 
 import (
 	"math/rand"
+	"net/http"
 
 	"go.opentelemetry.io/otel/attribute"
 	semconv "go.opentelemetry.io/otel/semconv/v1.25.0"
@@ -10,33 +11,47 @@ import (
 const SpanHTTPMethodKey = attribute.Key("http.method")
 
 func (sg *SpanAttrGenerator) HTTPMethodKey(val string) attribute.KeyValue {
-	return SpanHTTPMethodKey.String(val)
+	return semconv.HTTPMethod(val)
 }
 
 func (sg *SpanAttrGenerator) HTTPMethodRandomGenerate() attribute.KeyValue {
-	methods := GenerateHTTPMethodMocks()
-	method := methods[rand.Intn(len(methods))]
-	return semconv.HTTPMethod(string(method))
+	return sg.HTTPMethodKey(sg.getWeightedRandomHttpMethod())
 }
 
-type SpanAttrHTTPMethod string
+type httpMethodChoice struct {
+	Method string
+	Weight int
+}
 
-const (
-	SpanAttrHTTPMethodGET     = "GET"
-	SpanAttrHTTPMethodPOST    = "POST"
-	SpanAttrHTTPMethodPUT     = "PUT"
-	SpanAttrHTTPMethodPATCH   = "PATCH"
-	SpanAttrHTTPMethodDELETE  = "DELETE"
-	SpanAttrHTTPMethodOPTIONS = "OPTIONS"
-)
+func (sg *SpanAttrGenerator) getWeightedRandomHttpMethod() string {
+	totalWeight := 0
+	for _, choice := range sg.HTTPMethods {
+		totalWeight += choice.Weight
+	}
 
-func GenerateHTTPMethodMocks() []SpanAttrHTTPMethod {
-	return []SpanAttrHTTPMethod{
-		SpanAttrHTTPMethodGET,
-		SpanAttrHTTPMethodPOST,
-		SpanAttrHTTPMethodPUT,
-		SpanAttrHTTPMethodPATCH,
-		SpanAttrHTTPMethodDELETE,
-		SpanAttrHTTPMethodOPTIONS,
+	r := rand.Intn(totalWeight)
+
+	upto := 0
+	for _, choice := range sg.HTTPMethods {
+		if upto+choice.Weight > r {
+			return choice.Method
+		}
+		upto += choice.Weight
+	}
+
+	return sg.HTTPMethods[len(sg.HTTPMethods)-1].Method
+}
+
+func setWeightedRandomHttpMethod() []httpMethodChoice {
+	return []httpMethodChoice{
+		{Method: http.MethodGet, Weight: 50},
+		{Method: http.MethodPost, Weight: 50},
+		{Method: http.MethodPut, Weight: 5},
+		{Method: http.MethodPatch, Weight: 5},
+		{Method: http.MethodDelete, Weight: 5},
+		{Method: http.MethodOptions, Weight: 5},
+		{Method: http.MethodHead, Weight: 1},
+		{Method: http.MethodTrace, Weight: 1},
+		{Method: http.MethodConnect, Weight: 1},
 	}
 }

@@ -17,7 +17,7 @@ func (sg *SpanAttrGenerator) UserIDRandomGenerate() attribute.KeyValue {
 }
 
 func (sg *SpanAttrGenerator) GetRandomUserID() string {
-	return sg.UserID[rand.Intn(len(sg.UserID))]
+	return sg.UserIDs[rand.Intn(len(sg.UserIDs))]
 }
 
 func GenerateUserIDMocks(count int) []string {

@@ -13,9 +13,7 @@ func (sg *SpanAttrGenerator) SpanTypeKey(val SpanAttrSpanType) attribute.KeyValu
 }
 
 func (sg *SpanAttrGenerator) SpanTypeRandomGenerate() attribute.KeyValue {
-	spanTypes := GenerateSpanTypeMocks()
-	spanType := spanTypes[rand.Intn(len(spanTypes))]
-	return SpanAttributeSpanTypeKey.String(string(spanType))
+	return sg.SpanTypeKey(sg.getWeightedRandomSpanType())
 }
 
 type SpanAttrSpanType string
@@ -31,16 +29,39 @@ const (
 	SpanAttrSpanTypeLog       SpanAttrSpanType = "log"
 )
 
-func GenerateSpanTypeMocks() []SpanAttrSpanType {
+type spanTypeChoice struct {
+	spanType SpanAttrSpanType
+	Weight   int
+}
 
-	return []SpanAttrSpanType{
-		SpanAttrSpanTypeRender,
-		SpanAttrSpanTypeXHR,
-		SpanAttrSpanTypeCrash,
-		SpanAttrSpanTypeEvent,
-		SpanAttrSpanTypeANR,
-		SpanAttrSpanTypeError,
-		SpanAttrSpanTypeWebVitals,
-		SpanAttrSpanTypeLog,
+func (sg *SpanAttrGenerator) getWeightedRandomSpanType() SpanAttrSpanType {
+	totalWeight := 0
+	for _, choice := range sg.SpanTypes {
+		totalWeight += choice.Weight
+	}
+
+	r := rand.Intn(totalWeight)
+
+	upto := 0
+	for _, choice := range sg.SpanTypes {
+		if upto+choice.Weight > r {
+			return choice.spanType
+		}
+		upto += choice.Weight
+	}
+
+	return sg.SpanTypes[len(sg.SpanTypes)-1].spanType
+}
+
+func setWeightedRandomSpanType() []spanTypeChoice {
+	return []spanTypeChoice{
+		{spanType: SpanAttrSpanTypeXHR, Weight: 60},
+		{spanType: SpanAttrSpanTypeRender, Weight: 30},
+		{spanType: SpanAttrSpanTypeLog, Weight: 5},
+		{spanType: SpanAttrSpanTypeEvent, Weight: 40},
+		{spanType: SpanAttrSpanTypeANR, Weight: 5},
+		{spanType: SpanAttrSpanTypeCrash, Weight: 5},
+		{spanType: SpanAttrSpanTypeError, Weight: 2},
+		//{spanType: SpanAttrSpanTypeWebVitals, Weight: 5},
 	}
 }
