@@ -14,18 +14,15 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-const (
-	maxChildSpanCount          = 15
-	maxSpanDurationMilliSecond = 54321
-)
-
 type SpanGenerator struct {
-	tracer        trace.Tracer
-	serviceType   attrresource.ServiceType
-	attrGenerator *attrspan.SpanAttrGenerator
-	userID        string
-	actionGen     *spanaction.ActionGenerator
-	r             *rand.Rand
+	tracer                     trace.Tracer
+	serviceType                attrresource.ServiceType
+	attrGenerator              *attrspan.SpanAttrGenerator
+	userID                     string
+	actionGen                  *spanaction.ActionGenerator
+	r                          *rand.Rand
+	maxChildSpanCount          int
+	maxSpanDurationMilliSecond int
 }
 
 func NewSpanGenerator(serviceType attrresource.ServiceType, cfg *config.Config, routineID int) *SpanGenerator {
@@ -40,20 +37,22 @@ func NewSpanGenerator(serviceType attrresource.ServiceType, cfg *config.Config, 
 	)
 
 	return &SpanGenerator{
-		serviceType:   serviceType,
-		attrGenerator: spanAttrGen,
-		userID:        spanAttrGen.GetRandomUserID(),
-		actionGen:     spanaction.NewActionGenerator(spanAttrGen),
-		r:             rand.New(rand.NewSource(time.Now().UnixNano() + int64(routineID))),
+		serviceType:                serviceType,
+		attrGenerator:              spanAttrGen,
+		userID:                     spanAttrGen.GetRandomUserID(),
+		actionGen:                  spanaction.NewActionGenerator(spanAttrGen),
+		r:                          rand.New(rand.NewSource(time.Now().UnixNano() + int64(routineID))),
+		maxChildSpanCount:          cfg.GenerateOption.MaxChildSpanCount,
+		maxSpanDurationMilliSecond: cfg.GenerateOption.MaxSpanDurationMilliSecond,
 	}
 }
 
 func (s *SpanGenerator) GenerateTrace(mainCtx context.Context) {
 	parentCtx, rootSpan, inheritedAttr := s.GenerateParentSpan(mainCtx)
 
-	for i := 0; i < s.r.Intn(maxChildSpanCount); i++ {
+	for i := 0; i < s.r.Intn(s.maxChildSpanCount); i++ {
 		childSpan := s.GenerateChildSpan(parentCtx, inheritedAttr)
-		randomDelay := time.Duration(s.r.Intn(maxSpanDurationMilliSecond)) * time.Millisecond
+		randomDelay := time.Duration(s.r.Intn(s.maxSpanDurationMilliSecond)) * time.Millisecond
 		time.Sleep(randomDelay)
 		childSpan.End()
 	}

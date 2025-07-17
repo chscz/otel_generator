@@ -25,9 +25,11 @@ func LoadConfig() (*Config, error) {
 		GoroutineCount: 0,
 		UserCount:      0,
 		GenerateOption: GenerateOption{
-			UseDynamicInterval:      false,
-			traceIntervalMinSeconds: 10,
-			traceIntervalMaxSeconds: 60,
+			UseDynamicInterval:         false,
+			MinTraceIntervalSecond:     10,
+			MaxTraceIntervalSecond:     60,
+			MaxChildSpanCount:          15,
+			MaxSpanDurationMilliSecond: 5432,
 		},
 		SpanAttributes: SpanAttributes{
 			ScreenNames: attrspan.SpanAttributeScreenName{
@@ -57,7 +59,7 @@ func LoadConfig() (*Config, error) {
 	if err := yaml.Unmarshal(b, &cfg); err != nil {
 		return nil, err
 	}
-	
+
 	return cfg, cfg.validate()
 }
 
