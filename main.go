@@ -30,8 +30,17 @@ func main() {
 	var wg sync.WaitGroup
 	for i := 0; i < cfg.GoroutineCount; i++ {
 		wg.Add(1)
-		tg := generator.NewTraceGenerator(i, e.Exp, resourceGenerator, cfg)
-		go tg.Start(mainCtx, &wg)
+		tg, err := generator.NewTraceGenerator(i, e.Exp, resourceGenerator, cfg)
+		if err != nil {
+			log.Printf("failed to create trace generator:%v", err)
+			wg.Done()
+			continue
+		}
+		if cfg.GenerateOption.UseDynamicInterval {
+			go tg.StartDynamicInterval(mainCtx, &wg)
+		} else {
+			go tg.StartFixedInterval(mainCtx, &wg)
+		}
 	}
 
 	<-mainCtx.Done()

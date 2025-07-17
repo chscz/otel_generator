@@ -2,7 +2,6 @@ package generator
 
 import (
 	"context"
-	"fmt"
 	"math/rand"
 	"time"
 
@@ -11,9 +10,13 @@ import (
 	"otel-generator/internal/config"
 	"otel-generator/internal/spanaction"
 
-	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
+)
+
+const (
+	maxChildSpanCount          = 15
+	maxSpanDurationMilliSecond = 54321
 )
 
 type SpanGenerator struct {
@@ -25,7 +28,7 @@ type SpanGenerator struct {
 	r             *rand.Rand
 }
 
-func NewSpanGenerator(serviceType attrresource.ServiceType, cfg *config.Config) *SpanGenerator {
+func NewSpanGenerator(serviceType attrresource.ServiceType, cfg *config.Config, routineID int) *SpanGenerator {
 	spanAttrGen := attrspan.NewSpanAttrGenerator(
 		serviceType,
 		cfg.SpanAttributes.ScreenNames,
@@ -41,16 +44,16 @@ func NewSpanGenerator(serviceType attrresource.ServiceType, cfg *config.Config) 
 		attrGenerator: spanAttrGen,
 		userID:        spanAttrGen.GetRandomUserID(),
 		actionGen:     spanaction.NewActionGenerator(spanAttrGen),
-		r:             rand.New(rand.NewSource(time.Now().UnixNano())),
+		r:             rand.New(rand.NewSource(time.Now().UnixNano() + int64(routineID))),
 	}
 }
 
 func (s *SpanGenerator) GenerateTrace(mainCtx context.Context) {
 	parentCtx, rootSpan, inheritedAttr := s.GenerateParentSpan(mainCtx)
 
-	for i := 0; i < s.r.Intn(15); i++ {
+	for i := 0; i < s.r.Intn(maxChildSpanCount); i++ {
 		childSpan := s.GenerateChildSpan(parentCtx, inheritedAttr)
-		randomDelay := time.Duration(s.r.Intn(321)) * time.Millisecond
+		randomDelay := time.Duration(s.r.Intn(maxSpanDurationMilliSecond)) * time.Millisecond
 		time.Sleep(randomDelay)
 		childSpan.End()
 	}
@@ -58,87 +61,40 @@ func (s *SpanGenerator) GenerateTrace(mainCtx context.Context) {
 }
 
 func (s *SpanGenerator) GenerateParentSpan(parentCtx context.Context) (context.Context, trace.Span, attrspan.InheritedSpanAttr) {
-	attrSpanType := attrspan.SpanAttrSpanType(s.attrGenerator.SpanTypeRandomGenerate().Value.AsString())
-
-	var attrs []attribute.KeyValue
-	var spanName string
-	switch attrSpanType {
-	case attrspan.SpanAttrSpanTypeXHR:
-		attrs, spanName = s.actionGen.XHR.Generate()
-	case attrspan.SpanAttrSpanTypeCrash:
-		attrs, spanName = s.actionGen.Crash.Generate()
-	default:
-		spanName = fmt.Sprintf("this is parent span: %s", attrSpanType)
-	}
-
-	var taskCtx context.Context
-	var rootSpan trace.Span
-	if attrSpanType == attrspan.SpanAttrSpanTypeXHR {
-		taskCtx, rootSpan = s.tracer.Start(parentCtx, spanName, trace.WithSpanKind(trace.SpanKindClient))
-		rootSpan.SetAttributes(attrs...)
-	} else if (attrSpanType == attrspan.SpanAttrSpanTypeCrash) ||
-		(attrSpanType == attrspan.SpanAttrSpanTypeANR) ||
-		(attrSpanType == attrspan.SpanAttrSpanTypeError) {
-		taskCtx, rootSpan = s.tracer.Start(parentCtx, spanName)
-		rootSpan.SetAttributes(attrs...)
-		rootSpan.SetStatus(codes.Error, "test-description!!")
-	} else {
-		taskCtx, rootSpan = s.tracer.Start(parentCtx, spanName)
-		rootSpan.SetAttributes(attrs...)
-	}
-
-	inheritedAttr := s.setPopulateParentSpanAttributes(rootSpan, attrSpanType)
-
-	//switch attrSpanType {
-	//case attrspan.SpanAttrSpanTypeANR:
-	//case attrspan.SpanAttrSpanTypeCrash:
-	//case attrspan.SpanAttrSpanTypeError:
-	//case attrspan.SpanAttrSpanTypeEvent:
-	//case attrspan.SpanAttrSpanTypeLog:
-	//case attrspan.SpanAttrSpanTypeRender:
-	//case attrspan.SpanAttrSpanTypeXHR:
-	//	//s.actionGen.XHR.Generate(taskCtx, rootSpan)
-	//case attrspan.SpanAttrSpanTypeWebVitals:
-	//default:
-	//
-	//}
-
-	return taskCtx, rootSpan, inheritedAttr
+	ctx, spanType, span := s.generateSpan(parentCtx)
+	inheritedAttr := s.setPopulateParentSpanAttributes(span, spanType)
+	return ctx, span, inheritedAttr
 }
 
-func (s *SpanGenerator) GenerateChildSpan(parentCtx context.Context, attr attrspan.InheritedSpanAttr) trace.Span {
-	_, childSpan := s.tracer.Start(parentCtx, "child_span_name")
-	s.setPopulateChildSpanAttributes(childSpan, attr)
-	return childSpan
+func (s *SpanGenerator) GenerateChildSpan(parentCtx context.Context, parentAttr attrspan.InheritedSpanAttr) trace.Span {
+	_, spanType, span := s.generateSpan(parentCtx)
+	s.setPopulateChildSpanAttributes(span, spanType, parentAttr)
+	return span
+}
+
+func (s *SpanGenerator) generateSpan(parentCtx context.Context) (context.Context, attrspan.SpanAttrSpanType, trace.Span) {
+	attrSpanType := attrspan.SpanAttrSpanType(s.attrGenerator.SpanTypeRandomGenerate().Value.AsString())
+	attrs, spanName := s.actionGen.Generate(attrSpanType)
+
+	var opt []trace.SpanStartOption
+	if attrSpanType == attrspan.SpanAttrSpanTypeXHR {
+		opt = append(opt, trace.WithSpanKind(trace.SpanKindClient))
+	}
+
+	ctx, span := s.tracer.Start(parentCtx, spanName, opt...)
+	span.SetAttributes(attrs...)
+
+	if attrSpanType.IsErrorSpanType() {
+		span.SetStatus(codes.Error, "test-description!!")
+	}
+
+	return ctx, attrSpanType, span
 }
 
 func (s *SpanGenerator) setPopulateParentSpanAttributes(span trace.Span, spanType attrspan.SpanAttrSpanType) attrspan.InheritedSpanAttr {
 	return s.attrGenerator.SetPopulateParentSpanAttributes(span, spanType, s.userID)
 }
 
-func (s *SpanGenerator) setPopulateChildSpanAttributes(span trace.Span, attr attrspan.InheritedSpanAttr) {
-	s.attrGenerator.SetPopulateChildSpanAttributes(span, attr)
-}
-
-func makeSpanNameBySpanType(spanType attrspan.SpanAttrSpanType) string {
-	switch spanType {
-	case attrspan.SpanAttrSpanTypeXHR:
-		return "this is xhr"
-	case attrspan.SpanAttrSpanTypeRender:
-		return "this is render span"
-	case attrspan.SpanAttrSpanTypeEvent:
-		return "this is event span"
-	case attrspan.SpanAttrSpanTypeCrash:
-		return "this is crash span"
-	case attrspan.SpanAttrSpanTypeError:
-		return "this is error span"
-	case attrspan.SpanAttrSpanTypeANR:
-		return "this is anr span"
-	case attrspan.SpanAttrSpanTypeLog:
-		return "this is log span"
-	case attrspan.SpanAttrSpanTypeWebVitals:
-		return "this is web vital span"
-	default:
-		return "this is unknown span"
-	}
+func (s *SpanGenerator) setPopulateChildSpanAttributes(span trace.Span, spanType attrspan.SpanAttrSpanType, attr attrspan.InheritedSpanAttr) {
+	s.attrGenerator.SetPopulateChildSpanAttributes(span, spanType, attr)
 }

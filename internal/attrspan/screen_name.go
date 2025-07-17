@@ -19,15 +19,5 @@ func (sg *SpanAttrGenerator) ScreenNameKey(val string) attribute.KeyValue {
 }
 
 func (sg *SpanAttrGenerator) ScreenNameRandomGenerate() attribute.KeyValue {
-	screenNames := GenerateScreenNameMocks()
-	screenName := screenNames[rand.Intn(len(screenNames))]
-	return SpanAttributeScreenNameKey.String(screenName)
-}
-
-func GenerateScreenNameMocks() []string {
-	return []string{
-		"MainActivity",
-		"test-screen-name-1",
-		"test-screen-name-2",
-	}
+	return sg.ScreenNameKey(sg.ScreenNames[rand.Intn(len(sg.ScreenNames))])
 }

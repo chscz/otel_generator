@@ -65,3 +65,10 @@ func setWeightedRandomSpanType() []spanTypeChoice {
 		//{spanType: SpanAttrSpanTypeWebVitals, Weight: 5},
 	}
 }
+
+func (s SpanAttrSpanType) IsErrorSpanType() bool {
+	if s == SpanAttrSpanTypeError || s == SpanAttrSpanTypeCrash || s == SpanAttrSpanTypeANR {
+		return true
+	}
+	return false
+}

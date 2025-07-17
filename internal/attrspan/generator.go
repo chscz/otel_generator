@@ -71,9 +71,9 @@ func (sg *SpanAttrGenerator) SetPopulateParentSpanAttributes(span trace.Span, sp
 	}
 }
 
-func (sg *SpanAttrGenerator) SetPopulateChildSpanAttributes(span trace.Span, attr InheritedSpanAttr) {
+func (sg *SpanAttrGenerator) SetPopulateChildSpanAttributes(span trace.Span, spanType SpanAttrSpanType, attr InheritedSpanAttr) {
 	span.SetAttributes(
-		attr.SpanType,
+		sg.SpanTypeKey(spanType),
 		attr.UserID,
 		attr.SessionID,
 		attr.ScreenName,

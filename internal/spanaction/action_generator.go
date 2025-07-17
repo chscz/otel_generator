@@ -1,7 +1,11 @@
 package spanaction
 
 import (
+	"fmt"
+
 	"otel-generator/internal/attrspan"
+
+	"go.opentelemetry.io/otel/attribute"
 )
 
 type ActionGenerator struct {
@@ -26,4 +30,18 @@ func NewActionGenerator(spanAttrGen *attrspan.SpanAttrGenerator) *ActionGenerato
 		WebVitals: NewWebVitals(spanAttrGen),
 		XHR:       NewXHR(spanAttrGen),
 	}
+}
+
+func (ag *ActionGenerator) Generate(spanType attrspan.SpanAttrSpanType) ([]attribute.KeyValue, string) {
+	var attrs []attribute.KeyValue
+	var spanName string
+	switch spanType {
+	case attrspan.SpanAttrSpanTypeXHR:
+		attrs, spanName = ag.XHR.Generate()
+	case attrspan.SpanAttrSpanTypeCrash:
+		attrs, spanName = ag.Crash.Generate()
+	default:
+		spanName = fmt.Sprintf("this spanType is <%s>", spanType)
+	}
+	return attrs, spanName
 }

@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"os"
 
 	"otel-generator/internal/attrresource"
@@ -10,19 +11,24 @@ import (
 )
 
 type Config struct {
-	GoroutineCount int                    `yaml:"go_routine_count"`
 	CollectorURL   string                 `yaml:"collector_url"`
+	GoroutineCount int                    `yaml:"go_routine_count"`
 	UserCount      int                    `yaml:"user_count"`
+	GenerateOption GenerateOption         `yaml:"generate"`
 	Services       []attrresource.Service `yaml:"services"`
 	SpanAttributes SpanAttributes         `yaml:"span_attribute"`
 }
 
 func LoadConfig() (*Config, error) {
 	cfg := &Config{
+		//CollectorURL:   "http://localhost:4318/v1/traces",
 		GoroutineCount: 0,
 		UserCount:      0,
-		//CollectorURL:   "http://localhost:4318/v1/traces",
-		CollectorURL: "",
+		GenerateOption: GenerateOption{
+			UseDynamicInterval:      false,
+			traceIntervalMinSeconds: 10,
+			traceIntervalMaxSeconds: 60,
+		},
 		SpanAttributes: SpanAttributes{
 			ScreenNames: attrspan.SpanAttributeScreenName{
 				Android: []string{
@@ -51,6 +57,13 @@ func LoadConfig() (*Config, error) {
 	if err := yaml.Unmarshal(b, &cfg); err != nil {
 		return nil, err
 	}
+	
+	return cfg, cfg.validate()
+}
 
-	return cfg, nil
+func (c *Config) validate() error {
+	if c.CollectorURL == "" || c.GoroutineCount <= 0 || c.UserCount <= 0 {
+		return fmt.Errorf("invalid config: collector_url, goroutine_count, user_count")
+	}
+	return c.GenerateOption.validate()
 }
