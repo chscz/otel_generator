@@ -13,18 +13,18 @@ type CrashAttribute interface {
 }
 
 type Crash struct {
-	Attr CrashAttribute
+	attr CrashAttribute
 }
 
 func NewCrash(attrGenerator CrashAttribute) *Crash {
-	return &Crash{Attr: attrGenerator}
+	return &Crash{attr: attrGenerator}
 }
 
 func (c *Crash) Generate() ([]attribute.KeyValue, string) {
 	attrs := []attribute.KeyValue{
-		c.Attr.ExceptionTypeRandomGenerate(),
-		c.Attr.ExceptionMessageRandomGenerate(),
-		c.Attr.ExceptionStackTraceRandomGenerate(),
+		c.attr.ExceptionTypeRandomGenerate(),
+		c.attr.ExceptionMessageRandomGenerate(),
+		c.attr.ExceptionStackTraceRandomGenerate(),
 	}
 	return attrs, fmt.Sprintf("crash!!")
 }

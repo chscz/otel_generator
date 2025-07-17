@@ -1,24 +1,29 @@
 package spanaction
 
 import (
-	"otel-generator/internal/attrspan"
+	"fmt"
 
 	"go.opentelemetry.io/otel/attribute"
 )
 
 type AnrAttribute interface {
-	SpanTypeKey(val attrspan.SpanAttrSpanType) attribute.KeyValue
+	ExceptionTypeRandomGenerate() attribute.KeyValue
+	ExceptionMessageRandomGenerate() attribute.KeyValue
+	ExceptionStackTraceRandomGenerate() attribute.KeyValue
 }
 type Anr struct {
-	Attr AnrAttribute
+	attr AnrAttribute
 }
 
 func NewAnr(attrGenerator AnrAttribute) *Anr {
-	return &Anr{
-		Attr: attrGenerator,
-	}
+	return &Anr{attr: attrGenerator}
 }
 
-func (a *Anr) SpanTypeKey(val attrspan.SpanAttrSpanType) attribute.KeyValue {
-	return a.Attr.SpanTypeKey(val)
+func (a *Anr) Generate() ([]attribute.KeyValue, string) {
+	attrs := []attribute.KeyValue{
+		a.attr.ExceptionTypeRandomGenerate(),
+		a.attr.ExceptionMessageRandomGenerate(),
+		a.attr.ExceptionStackTraceRandomGenerate(),
+	}
+	return attrs, fmt.Sprintf("anr!!")
 }

@@ -40,25 +40,25 @@ func (x *XHR) Generate() ([]attribute.KeyValue, string) {
 }
 
 //func (x *XHR) HTTPMethodKey(val string) attribute.KeyValue {
-//	return x.Attr.HTTPMethodKey(val)
+//	return x.attr.HTTPMethodKey(val)
 //}
 
 //func (x *XHR) HTTPMethodRandomGenerate() attribute.KeyValue {
-//	return x.Attr.HTTPMethodRandomGenerate()
+//	return x.attr.HTTPMethodRandomGenerate()
 //}
 
 //func (x *XHR) HTTPURLKey(url, host, method string) []attribute.KeyValue {
-//	return x.Attr.HTTPURLKey(url, host, method)
+//	return x.attr.HTTPURLKey(url, host, method)
 //}
 
 //func (x *XHR) HTTPURLRandomGenerate() []attribute.KeyValue {
-//	return x.Attr.HTTPURLRandomGenerate()
+//	return x.attr.HTTPURLRandomGenerate()
 //}
 
 //func (x *XHR) HTTPStatusCodeKey(val int) attribute.KeyValue {
-//	return x.Attr.HTTPStatusCodeKey(val)
+//	return x.attr.HTTPStatusCodeKey(val)
 //}
 
 //func (x *XHR) HTTPStatusCodeRandomGenerate() attribute.KeyValue {
-//	return x.Attr.HTTPStatusCodeRandomGenerate()
+//	return x.attr.HTTPStatusCodeRandomGenerate()
 //}

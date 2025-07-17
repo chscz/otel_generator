@@ -14,7 +14,7 @@ generate:
   use_dynamic_interval: true
   min_trace_interval_second: 5
   max_trace_interval_second: 60
-  max_child_span_count: 15
+  max_child_span_count: 8
   max_span_duration_millisecond: 5432
 
 services:
