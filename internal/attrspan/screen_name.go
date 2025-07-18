@@ -1,9 +1,8 @@
 package attrspan
 
 import (
-	"math/rand"
-
 	"otel-generator/internal/attrresource"
+	"otel-generator/internal/util"
 
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -34,5 +33,13 @@ func (sg *SpanAttrGenerator) ScreenNameKey(val string) attribute.KeyValue {
 }
 
 func (sg *SpanAttrGenerator) ScreenNameRandomGenerate() attribute.KeyValue {
-	return sg.ScreenNameKey(sg.ScreenNames[rand.Intn(len(sg.ScreenNames))])
+	if len(sg.ScreenNames) == 0 {
+		return attribute.KeyValue{}
+	}
+
+	pick, ok := util.RandomElementFromSlice(sg.ScreenNames)
+	if !ok {
+		return attribute.KeyValue{}
+	}
+	return sg.ScreenNameKey(pick)
 }

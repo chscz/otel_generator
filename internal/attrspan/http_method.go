@@ -28,6 +28,12 @@ func (sg *SpanAttrGenerator) getWeightedRandomHttpMethod() string {
 	for _, choice := range sg.HTTPMethods {
 		totalWeight += choice.Weight
 	}
+	if totalWeight == 0 {
+		if len(sg.HTTPMethods) == 0 {
+			return ""
+		}
+		totalWeight = len(sg.HTTPMethods)
+	}
 
 	r := rand.Intn(totalWeight)
 

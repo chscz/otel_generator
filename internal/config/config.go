@@ -67,5 +67,8 @@ func (c *Config) validate() error {
 	if c.CollectorURL == "" || c.GoroutineCount <= 0 || c.UserCount <= 0 {
 		return fmt.Errorf("invalid config: collector_url, goroutine_count, user_count")
 	}
+	if len(c.Services) == 0 {
+		return fmt.Errorf("invalid config: no services specified")
+	}
 	return c.GenerateOption.validate()
 }

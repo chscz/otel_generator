@@ -3,6 +3,8 @@ package spanaction
 import (
 	"fmt"
 
+	"otel-generator/internal/attrspan"
+
 	"go.opentelemetry.io/otel/attribute"
 )
 
@@ -16,13 +18,12 @@ type XHRAttribute interface {
 }
 
 type XHR struct {
-	Attr XHRAttribute
+	spanType attrspan.SpanAttrSpanType
+	Attr     XHRAttribute
 }
 
 func NewXHR(attrGenerator XHRAttribute) *XHR {
-	return &XHR{
-		Attr: attrGenerator,
-	}
+	return &XHR{spanType: attrspan.SpanAttrSpanTypeXHR, Attr: attrGenerator}
 }
 
 //func (x *XHR) SetSpanAttribute(span trace.Span) {

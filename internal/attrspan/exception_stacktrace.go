@@ -1,9 +1,10 @@
 package attrspan
 
 import (
-	"math/rand"
+	"strings"
 
 	"otel-generator/internal/attrresource"
+	"otel-generator/internal/util"
 
 	"go.opentelemetry.io/otel/attribute"
 	semconv "go.opentelemetry.io/otel/semconv/v1.34.0"
@@ -32,6 +33,16 @@ func (sg *SpanAttrGenerator) ExceptionStackTraceKey(val string) attribute.KeyVal
 	return semconv.ExceptionStacktrace(val)
 }
 
-func (sg *SpanAttrGenerator) ExceptionStackTraceRandomGenerate() attribute.KeyValue {
-	return sg.ExceptionStackTraceKey(sg.ExceptionStackTraces[rand.Intn(len(sg.ExceptionStackTraces))])
+func (sg *SpanAttrGenerator) ExceptionStackTraceRandomGenerate(spanType SpanAttrSpanType) attribute.KeyValue {
+	var exceptionStackTraceBySpanType []string
+	for _, et := range sg.ExceptionStackTraces {
+		if strings.HasPrefix(et, string(spanType)) {
+			exceptionStackTraceBySpanType = append(exceptionStackTraceBySpanType, et)
+		}
+	}
+	pick, ok := util.RandomElementFromSlice[string](exceptionStackTraceBySpanType)
+	if !ok {
+		return attribute.KeyValue{}
+	}
+	return sg.ExceptionStackTraceKey(pick)
 }

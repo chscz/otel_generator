@@ -25,7 +25,12 @@ func (sg *SpanAttrGenerator) getWeightedRandomHttpStatusCode() int {
 	for _, choice := range sg.HTTPStatusCodes {
 		totalWeight += choice.Weight
 	}
-
+	if totalWeight == 0 {
+		if len(sg.HTTPStatusCodes) == 0 {
+			return 0
+		}
+		totalWeight = len(sg.HTTPMethods)
+	}
 	r := rand.Intn(totalWeight)
 
 	upto := 0

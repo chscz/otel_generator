@@ -1,8 +1,9 @@
 package attrspan
 
 import (
-	"math/rand"
 	"net/url"
+
+	"otel-generator/internal/util"
 
 	"go.opentelemetry.io/otel/attribute"
 	semconv12 "go.opentelemetry.io/otel/semconv/v1.12.0"
@@ -23,7 +24,10 @@ func (sg *SpanAttrGenerator) HTTPURLKey(url, host, method string) []attribute.Ke
 }
 
 func (sg *SpanAttrGenerator) HTTPURLRandomGenerate() []attribute.KeyValue {
-	urlFull := sg.HTTPURLs[rand.Intn(len(sg.HTTPURLs))]
+	urlFull, ok := util.RandomElementFromSlice[string](sg.HTTPURLs)
+	if !ok {
+		return nil
+	}
 
 	parsedURL, err := url.Parse(urlFull)
 	host := ""

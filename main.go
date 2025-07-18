@@ -8,10 +8,11 @@ import (
 	"sync"
 	"syscall"
 
-	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"otel-generator/internal/config"
 	"otel-generator/internal/exporter"
 	"otel-generator/internal/generator"
+
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 )
 
 func main() {
@@ -50,6 +51,6 @@ func main() {
 	log.Println("애플리케이션 종료 신호 수신. 모든 Goroutine 이 종료될 때까지 대기 중...")
 
 	wg.Wait()
-	log.Println("모든 Goroutine 정상 종료됨.")
+	log.Println("success graceful shutdown!! 모든 Goroutine 정상 종료됨.")
 	log.Println("애플리케이션 종료.")
 }

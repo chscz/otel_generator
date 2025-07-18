@@ -3,28 +3,31 @@ package spanaction
 import (
 	"fmt"
 
+	"otel-generator/internal/attrspan"
+
 	"go.opentelemetry.io/otel/attribute"
 )
 
 type CrashAttribute interface {
-	ExceptionTypeRandomGenerate() attribute.KeyValue
-	ExceptionMessageRandomGenerate() attribute.KeyValue
-	ExceptionStackTraceRandomGenerate() attribute.KeyValue
+	ExceptionTypeRandomGenerate(spanType attrspan.SpanAttrSpanType) attribute.KeyValue
+	ExceptionMessageRandomGenerate(spanType attrspan.SpanAttrSpanType) attribute.KeyValue
+	ExceptionStackTraceRandomGenerate(spanType attrspan.SpanAttrSpanType) attribute.KeyValue
 }
 
 type Crash struct {
-	attr CrashAttribute
+	spanType attrspan.SpanAttrSpanType
+	attr     CrashAttribute
 }
 
 func NewCrash(attrGenerator CrashAttribute) *Crash {
-	return &Crash{attr: attrGenerator}
+	return &Crash{spanType: attrspan.SpanAttrSpanTypeCrash, attr: attrGenerator}
 }
 
 func (c *Crash) Generate() ([]attribute.KeyValue, string) {
 	attrs := []attribute.KeyValue{
-		c.attr.ExceptionTypeRandomGenerate(),
-		c.attr.ExceptionMessageRandomGenerate(),
-		c.attr.ExceptionStackTraceRandomGenerate(),
+		c.attr.ExceptionTypeRandomGenerate(c.spanType),
+		c.attr.ExceptionMessageRandomGenerate(c.spanType),
+		c.attr.ExceptionStackTraceRandomGenerate(c.spanType),
 	}
 	return attrs, fmt.Sprintf("crash!!")
 }

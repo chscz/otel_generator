@@ -4,7 +4,7 @@ collector_url: "http://localhost:4318"
 #collector_url: "http://192.168.0.42:4318" # 다영
 
 # 현재 go routine 하나 당 세션 ID 하나로 생성됨. (세션아이디 주기적 갱신 아직 없음)
-go_routine_count: 5000
+go_routine_count: 2000
 # userID 가지 수
 user_count: 700
 generate:

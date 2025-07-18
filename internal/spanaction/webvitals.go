@@ -3,19 +3,21 @@ package spanaction
 import (
 	"fmt"
 
+	"otel-generator/internal/attrspan"
+
 	"go.opentelemetry.io/otel/attribute"
 )
 
 type WebVitalsAttribute interface{}
 type WebVitals struct {
-	attr WebVitalsAttribute
+	spanType attrspan.SpanAttrSpanType
+	attr     WebVitalsAttribute
 }
 
 func NewWebVitals(attrGenerator WebVitalsAttribute) *WebVitals {
-	return &WebVitals{attr: attrGenerator}
+	return &WebVitals{spanType: attrspan.SpanAttrSpanTypeWebVitals, attr: attrGenerator}
 }
 
 func (w *WebVitals) Generate() ([]attribute.KeyValue, string) {
-	attrs := []attribute.KeyValue{}
-	return attrs, fmt.Sprintf("web vitals!!")
+	return nil, fmt.Sprintf("web vitals!!")
 }

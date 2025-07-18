@@ -1,7 +1,7 @@
 package attrspan
 
 import (
-	"math/rand"
+	"otel-generator/internal/util"
 
 	"github.com/teris-io/shortid"
 	"go.opentelemetry.io/otel/attribute"
@@ -17,7 +17,11 @@ func (sg *SpanAttrGenerator) UserIDRandomGenerate() attribute.KeyValue {
 }
 
 func (sg *SpanAttrGenerator) GetRandomUserID() string {
-	return sg.UserIDs[rand.Intn(len(sg.UserIDs))]
+	userID, ok := util.RandomElementFromSlice(sg.UserIDs)
+	if !ok {
+		return ""
+	}
+	return userID
 }
 
 func GenerateUserIDMocks(count int) []string {

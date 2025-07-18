@@ -3,19 +3,21 @@ package spanaction
 import (
 	"fmt"
 
+	"otel-generator/internal/attrspan"
+
 	"go.opentelemetry.io/otel/attribute"
 )
 
 type RenderAttribute interface{}
 type Render struct {
-	attr RenderAttribute
+	spanType attrspan.SpanAttrSpanType
+	attr     RenderAttribute
 }
 
 func NewRender(attrGenerator RenderAttribute) *Render {
-	return &Render{attr: attrGenerator}
+	return &Render{spanType: attrspan.SpanAttrSpanTypeRender, attr: attrGenerator}
 }
 
 func (r *Render) Generate() ([]attribute.KeyValue, string) {
-	attrs := []attribute.KeyValue{}
-	return attrs, fmt.Sprintf("web vitals!!")
+	return nil, fmt.Sprintf("web vitals!!")
 }
