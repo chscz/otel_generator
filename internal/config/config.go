@@ -11,15 +11,15 @@ import (
 )
 
 type Config struct {
-	CollectorURL   string                 `yaml:"collector_url"`
-	GoroutineCount int                    `yaml:"go_routine_count"`
-	UserCount      int                    `yaml:"user_count"`
-	GenerateOption GenerateOption         `yaml:"generate"`
-	Services       []attrresource.Service `yaml:"services"`
-	SpanAttributes SpanAttributes         `yaml:"span_attribute"`
+	CollectorURL   string                  `yaml:"collector_url"`
+	GoroutineCount int                     `yaml:"go_routine_count"`
+	UserCount      int                     `yaml:"user_count"`
+	GenerateOption GenerateOption          `yaml:"generate"`
+	Services       []attrresource.Service  `yaml:"services"`
+	SpanAttributes attrspan.SpanAttributes `yaml:"span_attribute"`
 }
 
-func LoadConfig() (*Config, error) {
+func LoadConfig(configFilePath string) (*Config, error) {
 	cfg := &Config{
 		//CollectorURL:   "http://localhost:4318/v1/traces",
 		GoroutineCount: 0,
@@ -31,7 +31,7 @@ func LoadConfig() (*Config, error) {
 			MaxChildSpanCount:          15,
 			MaxSpanDurationMilliSecond: 5432,
 		},
-		SpanAttributes: SpanAttributes{
+		SpanAttributes: attrspan.SpanAttributes{
 			ScreenNames: attrspan.SpanAttributeScreenName{
 				Android: []string{
 					"MainActivity",
@@ -51,7 +51,7 @@ func LoadConfig() (*Config, error) {
 			},
 		},
 	}
-	b, err := os.ReadFile("./config.yaml")
+	b, err := os.ReadFile(configFilePath)
 	if err != nil {
 		return nil, err
 	}

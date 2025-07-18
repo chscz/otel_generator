@@ -28,11 +28,7 @@ type SpanGenerator struct {
 func NewSpanGenerator(serviceType attrresource.ServiceType, cfg *config.Config, routineID int) *SpanGenerator {
 	spanAttrGen := attrspan.NewSpanAttrGenerator(
 		serviceType,
-		cfg.SpanAttributes.ScreenNames,
-		cfg.SpanAttributes.HTTPURLs,
-		cfg.SpanAttributes.ExceptionTypes,
-		cfg.SpanAttributes.ExceptionMessages,
-		cfg.SpanAttributes.ExceptionStackTraces,
+		cfg.SpanAttributes,
 		cfg.UserCount,
 	)
 

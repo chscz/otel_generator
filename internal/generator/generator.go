@@ -10,8 +10,6 @@ import (
 
 	"otel-generator/internal/config"
 
-	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
-
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 )
 
@@ -22,7 +20,6 @@ const (
 
 type TraceGenerator struct {
 	routineID              int
-	exporter               *otlptrace.Exporter
 	resGen                 *ResourceGenerator
 	spanGen                *SpanGenerator
 	tp                     *sdktrace.TracerProvider
@@ -31,7 +28,7 @@ type TraceGenerator struct {
 	maxTraceIntervalSecond int
 }
 
-func NewTraceGenerator(routineID int, exporter *otlptrace.Exporter, resGen *ResourceGenerator, cfg *config.Config) (*TraceGenerator, error) {
+func NewTraceGenerator(routineID int, batchProc sdktrace.SpanProcessor, resGen *ResourceGenerator, cfg *config.Config) (*TraceGenerator, error) {
 	resource, serviceInfo := resGen.GenerateResource()
 	if resource == nil {
 		return nil, fmt.Errorf("goroutine %d: Resource 생성 실패", routineID)
@@ -39,11 +36,10 @@ func NewTraceGenerator(routineID int, exporter *otlptrace.Exporter, resGen *Reso
 
 	spanGen := NewSpanGenerator(serviceInfo.ServiceType, cfg, routineID)
 
-	tp := sdktrace.NewTracerProvider(sdktrace.WithBatcher(exporter), sdktrace.WithResource(resource))
+	tp := sdktrace.NewTracerProvider(sdktrace.WithSpanProcessor(batchProc), sdktrace.WithResource(resource))
 
 	return &TraceGenerator{
 		routineID:              routineID,
-		exporter:               exporter,
 		resGen:                 resGen,
 		tp:                     tp,
 		spanGen:                spanGen,

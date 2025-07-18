@@ -3,7 +3,6 @@ package attrspan
 import (
 	"otel-generator/internal/attrresource"
 
-	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 )
 
@@ -21,30 +20,19 @@ type SpanAttrGenerator struct {
 	ExceptionStackTraces []string
 }
 
-func NewSpanAttrGenerator(serviceType attrresource.ServiceType, screenNames SpanAttributeScreenName, httpurls, exceptionTypes, exceptionMessages, exceptionStackTraces []string, userCount int) *SpanAttrGenerator {
-	var sn []string
-	switch serviceType {
-	case attrresource.ServiceTypeAndroid:
-		sn = screenNames.Android
-	case attrresource.ServiceTypeIOS:
-		sn = screenNames.IOS
-	case attrresource.ServiceTypeWeb:
-		sn = screenNames.Web
-	default:
-	}
-
+func NewSpanAttrGenerator(serviceType attrresource.ServiceType, spanAttrConfig SpanAttributes, userCount int) *SpanAttrGenerator {
 	return &SpanAttrGenerator{
 		ServiceType:          serviceType,
 		SpanTypes:            setWeightedRandomSpanType(),
 		SessionID:            GenerateSessionIDMock(),
-		ScreenNames:          sn,
+		ScreenNames:          getAttributeByServiceType[SpanAttributeScreenName](serviceType, spanAttrConfig.ScreenNames),
 		UserIDs:              GenerateUserIDMocks(userCount),
-		HTTPURLs:             httpurls,
+		HTTPURLs:             spanAttrConfig.HTTPURLs,
 		HTTPMethods:          setWeightedRandomHttpMethod(),
 		HTTPStatusCodes:      setWeightedRandomHttpStatusCode(),
-		ExceptionTypes:       exceptionTypes,
-		ExceptionMessages:    exceptionMessages,
-		ExceptionStackTraces: exceptionStackTraces,
+		ExceptionTypes:       getAttributeByServiceType[SpanAttributeExceptionType](serviceType, spanAttrConfig.ExceptionTypes),
+		ExceptionMessages:    getAttributeByServiceType[SpanAttributeExceptionMessage](serviceType, spanAttrConfig.ExceptionMessages),
+		ExceptionStackTraces: getAttributeByServiceType[SpanAttributeExceptionStackTrace](serviceType, spanAttrConfig.ExceptionStackTraces),
 	}
 }
 
@@ -81,10 +69,6 @@ func (sg *SpanAttrGenerator) SetPopulateChildSpanAttributes(span trace.Span, spa
 	)
 }
 
-type InheritedSpanAttr struct {
-	SessionID  attribute.KeyValue
-	UserID     attribute.KeyValue
-	SpanType   attribute.KeyValue
-	ScreenName attribute.KeyValue
-	ScreenType attribute.KeyValue
+func getAttributeByServiceType[T AttributeSourceByServiceType](serviceType attrresource.ServiceType, attr T) []string {
+	return attr.GetAttributes(serviceType)
 }

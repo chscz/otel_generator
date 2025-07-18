@@ -21,12 +21,12 @@ func NewExporter(mainCtx context.Context, collectorURL string) *Exporter {
 	if err != nil {
 		log.Panicf("failed to create exporter: %v", err)
 	}
-	
+
 	return &Exporter{Exp: exporter}
 }
 
 func (e *Exporter) Shutdown() {
-	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
 	if err := e.Exp.Shutdown(shutdownCtx); err != nil {

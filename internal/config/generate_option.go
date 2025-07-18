@@ -23,18 +23,18 @@ type GenerateOption struct {
 
 func (g *GenerateOption) validate() error {
 	if g.MinTraceIntervalSecond <= 0 || g.MaxTraceIntervalSecond <= 0 {
-		return fmt.Errorf("간격은 양수여야 합니다 (min: %s, max: %s)", g.MinTraceIntervalSecond, g.MaxTraceIntervalSecond)
+		return fmt.Errorf("간격은 양수여야 합니다 (min: %d, max: %d)", g.MinTraceIntervalSecond, g.MaxTraceIntervalSecond)
 	}
 	if g.MinTraceIntervalSecond >= g.MaxTraceIntervalSecond {
 		return fmt.Errorf(
-			"최소 간격(%s)이 최대 간격(%s)보다 크거나 같을 수 없습니다",
+			"최소 간격(%d)이 최대 간격(%d)보다 크거나 같을 수 없습니다",
 			g.MinTraceIntervalSecond,
 			g.MaxTraceIntervalSecond,
 		)
 	}
 	if g.MinTraceIntervalSecond < minAllowedInterval {
 		return fmt.Errorf(
-			"최소 간격(%s)이 허용된 최솟값(%s)보다 작습니다",
+			"최소 간격(%d)이 허용된 최솟값(%d)보다 작습니다",
 			g.MinTraceIntervalSecond,
 			minAllowedInterval,
 		)

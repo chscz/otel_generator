@@ -8,6 +8,7 @@ import (
 	"sync"
 	"syscall"
 
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"otel-generator/internal/config"
 	"otel-generator/internal/exporter"
 	"otel-generator/internal/generator"
@@ -17,20 +18,22 @@ func main() {
 	mainCtx, cancelSignal := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer cancelSignal()
 
-	cfg, err := config.LoadConfig()
+	cfg, err := config.LoadConfig("./config.yaml")
 	if err != nil {
 		log.Fatalf("failed to load config:%v", err)
 	}
 
 	e := exporter.NewExporter(mainCtx, cfg.CollectorURL)
 	defer e.Shutdown()
+	batchProcessor := sdktrace.NewBatchSpanProcessor(e.Exp)
+	defer batchProcessor.Shutdown(context.Background())
 
 	resourceGenerator := generator.NewResource(cfg.Services)
 
 	var wg sync.WaitGroup
 	for i := 0; i < cfg.GoroutineCount; i++ {
 		wg.Add(1)
-		tg, err := generator.NewTraceGenerator(i, e.Exp, resourceGenerator, cfg)
+		tg, err := generator.NewTraceGenerator(i, batchProcessor, resourceGenerator, cfg)
 		if err != nil {
 			log.Printf("failed to create trace generator:%v", err)
 			wg.Done()

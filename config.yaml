@@ -1,9 +1,10 @@
 collector_url: "http://localhost:4318"
 #collector_url: "http://192.168.0.81:4318" # 현정
 #collector_url: "http://192.168.0.158:4318" # 다영
+#collector_url: "http://192.168.0.42:4318" # 다영
 
 # 현재 go routine 하나 당 세션 ID 하나로 생성됨. (세션아이디 주기적 갱신 아직 없음)
-go_routine_count: 876
+go_routine_count: 5000
 # userID 가지 수
 user_count: 700
 generate:
@@ -13,9 +14,9 @@ generate:
   # - trace_interval_min_seconds ~ trace_interval_max_seconds 사이 값으로 트레이스 생성마다 매번 랜덤 간격
   use_dynamic_interval: true
   min_trace_interval_second: 5
-  max_trace_interval_second: 60
+  max_trace_interval_second: 100
   max_child_span_count: 8
-  max_span_duration_millisecond: 5432
+  max_span_duration_millisecond: 4321
 
 services:
   # ios
@@ -40,10 +41,10 @@ services:
 #    version: "1.3.5"
 #    key: "service-key"
 #    type: "android"
-#  - name: "and1"
-#    version: "2.1.1"
-#    key: "service-key"
-#    type: "android"
+  - name: "and1"
+    version: "2.1.1"
+    key: "service-key"
+    type: "android"
 #  - name: "and2"
 #    version: "2.1.1"
 #    key: "service-key"
@@ -164,33 +165,48 @@ span_attribute:
     - "https://s3.ap-northeast-2.amazonaws.com/my-logs/2025/07/11/app.log"
     - "https://example.com/promo?campaign=summer_sale&source=email"
   exception_types:
-    - "11-exception-type"
-    - "22-exception-type"
-    - "33-exception-type"
-    - "44-exception-type"
-    - "55-exception-type"
-    - "66-exception-type"
-    - "77-exception-type"
-    - "88-exception-type"
-    - "99-exception-type"
+    crash:
+      - "crash-exception-type 이다ㅏㅏㅏㅏ"
+      - "crash-exception-type 일껄ㄹㄹㄹㄹㄹㄹㄹ"
+      - "crash-exception-type 입니다만ㄴㄴ"
+      - "crash-exception-type 인데???"
+      - "crash-exception-type 일꺼임ㅁㅁㅁㅁㅁㅁㅁㅁㅁ"
+      - "crash-exception-type 인가보다ㅏㅏ아아아아"
+      - "crash-exception-type 인가봐ㅏㅏㅏ"
+    anr:
+      - "anr-except-type 이구만ㄴ..."
+      - "anr-except-type 일까ㅏㅏㅏ??"
+      - "anr-except-type 인건가ㅏㅏㅏㅏㅏㅏㅏㅏ"
+    error:
+      - "error-except-type 이지 말입니다"
+      - "error-except-type 인걸까ㅏㅏㅏ"
+      - "error-except-type 이지 않을깎ㄲㄲㄲ"
+      - "error-except-type 이란다다다다다"
+      - "error-except-type 이잖아ㅏㅏ"
   exception_messages:
-    - "0000-exception-message"
-    - "1111-exception-message"
-    - "2222-exception-message"
-    - "3333-exception-message"
-    - "4444-exception-message"
-    - "5555-exception-message"
-    - "6666-exception-message"
-    - "7777-exception-message"
-    - "8888-exception-message"
-    - "9999-exception-message"
-    - "AAAA-exception-message"
-    - "BBBB-exception-message"
-    - "CCCC-exception-message"
-    - "DDDD-exception-message"
-    - "EEEE-exception-message"
-    - "FFFF-exception-message"
+    crash:
+      - "crash-except-message 하이"
+      - "crash-except-message 헬로"
+      - "crash-except-message 안녕"
+      - "crash-except-message 방가"
+    anr:
+      - "anr-except-message 곤니찌와"
+      - "anr-except-message 봉쥬르"
+      - "anr-except-message 곤방와"
+    error:
+      - "error-exception-message 귀"
+      - "error-exception-message 찮"
+      - "error-exception-message 다"
   exception_stack_traces:
-    - "test-stack-trace 다!!"
-    - "이거는 test-stack-trace 다!!"
-    - "요것도 test-stack-trace 다!!"
+    crash:
+      - "crash-stack-trace 하나다!!"
+      - "crash-stack-trace 둘이다!!"
+      - "crash-stack-trace 셋이다!!"
+    anr:
+      - "anr-stack-trace ㄱㄷ!!"
+      - "anr-stack-trace ㅈㅁ!!"
+      - "anr-stack-trace ㄱㄱ!!"
+    error:
+      - "error-stack-trace 원!!"
+      - "error-stack-trace 투!!"
+      - "error-stack-trace 쓰리!!"
