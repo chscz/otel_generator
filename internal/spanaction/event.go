@@ -20,5 +20,11 @@ func NewEvent(attrGenerator EventAttribute) *Event {
 }
 
 func (e *Event) Generate() ([]attribute.KeyValue, string) {
-	return nil, fmt.Sprintf("event!!")
+	attrs := []attribute.KeyValue{
+		attribute.Key("target_element_text").String("foo_target_element_text!!"),
+		attribute.Key("target_element_id").String("foo_target_element_id!!"),
+		attribute.Key("target_element").String("foo_target_element!!"),
+	}
+
+	return attrs, fmt.Sprintf("Click")
 }

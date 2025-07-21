@@ -44,6 +44,8 @@ func (ag *ActionGenerator) Generate(spanType attrspan.SpanAttrSpanType) ([]attri
 		attrs, spanName = ag.Anr.Generate()
 	case attrspan.SpanAttrSpanTypeError:
 		attrs, spanName = ag.Error.Generate()
+	case attrspan.SpanAttrSpanTypeEvent:
+		attrs, spanName = ag.Event.Generate()
 	default:
 		spanName = fmt.Sprintf("this spanType is <%s>", spanType)
 	}
