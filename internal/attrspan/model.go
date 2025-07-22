@@ -11,6 +11,7 @@ type InheritedSpanAttr struct {
 	ScreenName attribute.KeyValue
 	ScreenType attribute.KeyValue
 }
+
 type SpanAttributes struct {
 	ScreenNames          SpanAttributeScreenName          `yaml:"screen_names"`
 	HTTPURLs             []string                         `yaml:"http_urls"`

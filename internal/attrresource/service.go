@@ -1,6 +1,10 @@
 package attrresource
 
-import "go.opentelemetry.io/otel/attribute"
+import (
+	"math/rand"
+
+	"go.opentelemetry.io/otel/attribute"
+)
 
 type ServiceType string
 
@@ -23,11 +27,15 @@ const (
 	ResourceAttributeServiceType = attribute.Key("imqa.service.type")
 )
 
+func (rg *ResourceAttrGenerator) SetServiceTypeAttr() {
+
+}
+
 func SetServiceTypeAttr(val ServiceType) attribute.KeyValue {
 	return ResourceAttributeServiceType.String(string(val))
 }
 
-func ServiceKey(val string) attribute.KeyValue {
+func SetServiceKeyAttr(val string) attribute.KeyValue {
 	return ResourceAttributeServiceKey.String(val)
 }
 
@@ -45,4 +53,19 @@ func GenerateServiceMocks() []Service {
 		{Name: "test-service-web-1", Version: "3.0.12", Key: "service-key", Type: ServiceTypeWeb},
 		{Name: "test-service-web-2", Version: "3.2.1", Key: "service-key", Type: ServiceTypeWeb},
 	}
+}
+
+//
+//func (rg *ResourceAttrGenerator) pickService(n int) attrresource.Service {
+//	return rg.Services[n]
+//}
+
+func (rg *ResourceAttrGenerator) PickServiceRandom() Service {
+	return rg.Services[rand.Intn(len(rg.Services))]
+	//return []attribute.KeyValue{
+	//	semconv.ServiceName(service.Name),
+	//	semconv.ServiceVersion(service.Version),
+	//	SetServiceKeyAttr(service.Key),
+	//	SetServiceTypeAttr(service.Type),
+	//}
 }

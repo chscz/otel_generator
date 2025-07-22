@@ -5,9 +5,6 @@ import (
 	semconv "go.opentelemetry.io/otel/semconv/v1.30.0"
 )
 
-func TelemetrySDKName(val string) attribute.KeyValue {
-	switch val {
-	default:
-		return semconv.TelemetrySDKName(val)
-	}
+func SetTelemetrySDKNameAttr(val string) attribute.KeyValue {
+	return semconv.TelemetrySDKName(val)
 }

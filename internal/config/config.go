@@ -11,12 +11,13 @@ import (
 )
 
 type Config struct {
-	CollectorURL   string                  `yaml:"collector_url"`
-	GoroutineCount int                     `yaml:"go_routine_count"`
-	UserCount      int                     `yaml:"user_count"`
-	GenerateOption GenerateOption          `yaml:"generate"`
-	Services       []attrresource.Service  `yaml:"services"`
-	SpanAttributes attrspan.SpanAttributes `yaml:"span_attribute"`
+	CollectorURL       string                          `yaml:"collector_url"`
+	GoroutineCount     int                             `yaml:"go_routine_count"`
+	UserCount          int                             `yaml:"user_count"`
+	GenerateOption     GenerateOption                  `yaml:"generate"`
+	Services           []attrresource.Service          `yaml:"services"`
+	SpanAttributes     attrspan.SpanAttributes         `yaml:"span_attribute"`
+	ResourceAttributes attrresource.ResourceAttributes `yaml:"resource_attribute"`
 }
 
 func LoadConfig(configFilePath string) (*Config, error) {

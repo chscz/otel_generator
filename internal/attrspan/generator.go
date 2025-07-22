@@ -7,32 +7,34 @@ import (
 )
 
 type SpanAttrGenerator struct {
-	ServiceType          attrresource.ServiceType
-	SpanTypes            []spanTypeChoice
-	SessionID            string
-	UserIDs              []string
-	ScreenNames          []string
-	HTTPURLs             []string
-	HTTPMethods          []httpMethodChoice
-	HTTPStatusCodes      []httpStatusCodeChoice
-	ExceptionTypes       []string
-	ExceptionMessages    []string
-	ExceptionStackTraces []string
+	ServiceType           attrresource.ServiceType
+	SpanTypes             []spanTypeChoice
+	SessionID             string
+	UserIDs               []string
+	ScreenNames           []string
+	HTTPURLs              []string
+	HTTPMethods           []httpMethodChoice
+	HTTPStatusCodes       []httpStatusCodeChoice
+	ExceptionTypes        []string
+	ExceptionMessages     []string
+	ExceptionStackTraces  []string
+	NetworkConnectionType []networkConnectionTypeChoice
 }
 
 func NewSpanAttrGenerator(serviceType attrresource.ServiceType, spanAttrConfig SpanAttributes, userCount int) *SpanAttrGenerator {
 	return &SpanAttrGenerator{
-		ServiceType:          serviceType,
-		SpanTypes:            setWeightedRandomSpanType(),
-		SessionID:            GenerateSessionIDMock(),
-		ScreenNames:          getAttributeByServiceType[SpanAttributeScreenName](serviceType, spanAttrConfig.ScreenNames),
-		UserIDs:              GenerateUserIDMocks(userCount),
-		HTTPURLs:             spanAttrConfig.HTTPURLs,
-		HTTPMethods:          setWeightedRandomHttpMethod(),
-		HTTPStatusCodes:      setWeightedRandomHttpStatusCode(),
-		ExceptionTypes:       getAttributeByServiceType[SpanAttributeExceptionType](serviceType, spanAttrConfig.ExceptionTypes),
-		ExceptionMessages:    getAttributeByServiceType[SpanAttributeExceptionMessage](serviceType, spanAttrConfig.ExceptionMessages),
-		ExceptionStackTraces: getAttributeByServiceType[SpanAttributeExceptionStackTrace](serviceType, spanAttrConfig.ExceptionStackTraces),
+		ServiceType:           serviceType,
+		SpanTypes:             setWeightedRandomSpanType(),
+		SessionID:             GenerateSessionIDMock(),
+		ScreenNames:           getAttributeByServiceType[SpanAttributeScreenName](serviceType, spanAttrConfig.ScreenNames),
+		UserIDs:               GenerateUserIDMocks(userCount),
+		HTTPURLs:              spanAttrConfig.HTTPURLs,
+		HTTPMethods:           setWeightedRandomHttpMethod(),
+		HTTPStatusCodes:       setWeightedRandomHttpStatusCode(),
+		ExceptionTypes:        getAttributeByServiceType[SpanAttributeExceptionType](serviceType, spanAttrConfig.ExceptionTypes),
+		ExceptionMessages:     getAttributeByServiceType[SpanAttributeExceptionMessage](serviceType, spanAttrConfig.ExceptionMessages),
+		ExceptionStackTraces:  getAttributeByServiceType[SpanAttributeExceptionStackTrace](serviceType, spanAttrConfig.ExceptionStackTraces),
+		NetworkConnectionType: setWeightedRandomNetworkConnectionType(),
 	}
 }
 

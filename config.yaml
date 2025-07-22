@@ -66,6 +66,16 @@ services:
 #    version: "3.2.1"
 #    key: "service-key"
 #    type: "web"
+resource_attribute:
+  os_name:
+    android:
+      - "android"
+    ios:
+      - "iOS"
+    web:
+      - "Android"
+      - "iOS"
+      - "Windows"
 
 span_attribute:
   screen_names:

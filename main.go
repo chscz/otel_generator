@@ -29,7 +29,7 @@ func main() {
 	batchProcessor := sdktrace.NewBatchSpanProcessor(e.Exp)
 	defer batchProcessor.Shutdown(context.Background())
 
-	resourceGenerator := generator.NewResource(cfg.Services)
+	resourceGenerator := generator.NewResourceGenerator(cfg.Services, cfg.ResourceAttributes)
 
 	var wg sync.WaitGroup
 	for i := 0; i < cfg.GoroutineCount; i++ {

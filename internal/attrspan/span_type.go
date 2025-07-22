@@ -56,13 +56,13 @@ func (sg *SpanAttrGenerator) getWeightedRandomSpanType() SpanAttrSpanType {
 func setWeightedRandomSpanType() []spanTypeChoice {
 	return []spanTypeChoice{
 		{spanType: SpanAttrSpanTypeXHR, Weight: 100},
-		{spanType: SpanAttrSpanTypeRender, Weight: 70},
-		{spanType: SpanAttrSpanTypeLog, Weight: 5},
-		{spanType: SpanAttrSpanTypeEvent, Weight: 60},
-		{spanType: SpanAttrSpanTypeANR, Weight: 1},
-		{spanType: SpanAttrSpanTypeCrash, Weight: 1},
-		{spanType: SpanAttrSpanTypeError, Weight: 1},
-		{spanType: SpanAttrSpanTypeWebVitals, Weight: 5},
+		//{spanType: SpanAttrSpanTypeRender, Weight: 70},
+		//{spanType: SpanAttrSpanTypeLog, Weight: 5},
+		//{spanType: SpanAttrSpanTypeEvent, Weight: 60},
+		//{spanType: SpanAttrSpanTypeANR, Weight: 1},
+		//{spanType: SpanAttrSpanTypeCrash, Weight: 1},
+		//{spanType: SpanAttrSpanTypeError, Weight: 1},
+		//{spanType: SpanAttrSpanTypeWebVitals, Weight: 5},
 	}
 }
 

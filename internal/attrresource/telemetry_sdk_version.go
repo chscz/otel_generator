@@ -6,8 +6,5 @@ import (
 )
 
 func TelemetrySDKVersion(val string) attribute.KeyValue {
-	switch val {
-	default:
-		return semconv.TelemetrySDKVersion(val)
-	}
+	return semconv.TelemetrySDKVersion(val)
 }

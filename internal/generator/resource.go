@@ -2,22 +2,25 @@ package generator
 
 import (
 	"fmt"
-	"math/rand"
 	"strings"
 
 	"otel-generator/internal/attrresource"
 
+	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/sdk/resource"
 	semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
 )
 
 type ResourceGenerator struct {
-	Services []attrresource.Service
+	Services      []attrresource.Service
+	attrGenerator *attrresource.ResourceAttrGenerator
 }
 
-func NewResource(services []attrresource.Service) *ResourceGenerator {
+func NewResourceGenerator(services []attrresource.Service, attr attrresource.ResourceAttributes) *ResourceGenerator {
+	resourceAttrGen := attrresource.NewResourceAttrGenerator(services, attr)
 	return &ResourceGenerator{
-		Services: services,
+		Services:      services,
+		attrGenerator: resourceAttrGen,
 	}
 }
 
@@ -28,16 +31,20 @@ type ResourceInfo struct {
 }
 
 func (r *ResourceGenerator) GenerateResource() (*resource.Resource, ResourceInfo) {
-	service := r.pickServiceRandom()
+	service := r.attrGenerator.PickServiceRandom()
+	attrs := []attribute.KeyValue{
+		semconv.ServiceName(service.Name),
+		semconv.ServiceVersion(service.Version),
+		attrresource.SetServiceKeyAttr(service.Key),
+		attrresource.SetServiceTypeAttr(service.Type),
+		r.attrGenerator.SetOSNameAttr(service.Type),
+	}
 
 	rs, err := resource.Merge(
 		resource.Default(),
 		resource.NewWithAttributes(
 			semconv.SchemaURL,
-			semconv.ServiceName(service.Name),
-			semconv.ServiceVersion(service.Version),
-			attrresource.ServiceKey(service.Key),
-			attrresource.SetServiceTypeAttr(service.Type),
+			attrs...,
 		),
 	)
 	if err != nil {
@@ -49,14 +56,6 @@ func (r *ResourceGenerator) GenerateResource() (*resource.Resource, ResourceInfo
 		ServiceVersion: service.Version,
 		ServiceType:    attrresource.ServiceType(strings.ToUpper(string(service.Type))),
 	}
-}
-
-func (r *ResourceGenerator) pickService(n int) attrresource.Service {
-	return r.Services[n]
-}
-
-func (r *ResourceGenerator) pickServiceRandom() attrresource.Service {
-	return r.Services[rand.Intn(len(r.Services))]
 }
 
 func (s ResourceInfo) String() string {
