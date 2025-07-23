@@ -24,13 +24,13 @@ func NewResourceGenerator(services []attrresource.Service, attr attrresource.Res
 	}
 }
 
-type ResourceInfo struct {
+type ServiceInfo struct {
 	ServiceName    string
 	ServiceVersion string
 	ServiceType    attrresource.ServiceType
 }
 
-func (r *ResourceGenerator) GenerateResource() (*resource.Resource, ResourceInfo) {
+func (r *ResourceGenerator) GenerateResource() (*resource.Resource, ServiceInfo) {
 	service := r.attrGenerator.PickServiceRandom()
 
 	attrs := []attribute.KeyValue{
@@ -52,15 +52,15 @@ func (r *ResourceGenerator) GenerateResource() (*resource.Resource, ResourceInfo
 	)
 	if err != nil {
 		fmt.Printf("failed to generate resource: %v", err)
-		return nil, ResourceInfo{}
+		return nil, ServiceInfo{}
 	}
-	return rs, ResourceInfo{
+	return rs, ServiceInfo{
 		ServiceName:    service.Name,
 		ServiceVersion: service.Version,
 		ServiceType:    attrresource.ServiceType(strings.ToUpper(string(service.Type))),
 	}
 }
 
-func (s ResourceInfo) String() string {
+func (s ServiceInfo) String() string {
 	return fmt.Sprintf("%s@%s::%s", s.ServiceName, s.ServiceVersion, s.ServiceType)
 }

@@ -23,18 +23,18 @@ type TraceGenerator struct {
 	resGen                 *ResourceGenerator
 	spanGen                *SpanGenerator
 	tp                     *sdktrace.TracerProvider
-	serviceInfo            ResourceInfo
+	serviceInfo            ServiceInfo
 	minTraceIntervalSecond int
 	maxTraceIntervalSecond int
 }
 
-func NewTraceGenerator(routineID int, batchProc sdktrace.SpanProcessor, resGen *ResourceGenerator, cfg *config.Config) (*TraceGenerator, error) {
+func NewTraceGenerator(ctx context.Context, routineID int, batchProc sdktrace.SpanProcessor, resGen *ResourceGenerator, cfg *config.Config) (*TraceGenerator, error) {
 	resource, serviceInfo := resGen.GenerateResource()
 	if resource == nil {
 		return nil, fmt.Errorf("goroutine %d: Resource 생성 실패", routineID)
 	}
 
-	spanGen := NewSpanGenerator(serviceInfo.ServiceType, cfg, routineID)
+	spanGen := NewSpanGenerator(ctx, serviceInfo.ServiceType, cfg, routineID)
 
 	tp := sdktrace.NewTracerProvider(sdktrace.WithSpanProcessor(batchProc), sdktrace.WithResource(resource))
 

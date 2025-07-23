@@ -43,9 +43,9 @@ func (sg *SpanAttrGenerator) getWeightedRandomNetworkConnectionType() attribute.
 
 func setWeightedRandomNetworkConnectionType() []networkConnectionTypeChoice {
 	return []networkConnectionTypeChoice{
-		{NetworkConnectionType: semconv.NetworkConnectionTypeWifi, Weight: 1},
+		{NetworkConnectionType: semconv.NetworkConnectionTypeWifi, Weight: 100},
 		{NetworkConnectionType: semconv.NetworkConnectionTypeWired, Weight: 1},
-		{NetworkConnectionType: semconv.NetworkConnectionTypeCell, Weight: 1},
+		{NetworkConnectionType: semconv.NetworkConnectionTypeCell, Weight: 100},
 		{NetworkConnectionType: semconv.NetworkConnectionTypeUnavailable, Weight: 1},
 		{NetworkConnectionType: semconv.NetworkConnectionTypeUnknown, Weight: 1},
 	}

@@ -25,15 +25,21 @@ type SpanGenerator struct {
 	maxSpanDurationMilliSecond int
 }
 
-func NewSpanGenerator(serviceType attrresource.ServiceType, cfg *config.Config, routineID int) *SpanGenerator {
+func NewSpanGenerator(ctx context.Context, serviceType attrresource.ServiceType, cfg *config.Config, routineID int) *SpanGenerator {
 	spanAttrGen := attrspan.NewSpanAttrGenerator(
 		serviceType,
 		cfg.SpanAttributes,
 		cfg.UserCount,
+		cfg.GenerateOption.MinSessionIDRefreshIntervalMinute,
+		cfg.GenerateOption.MaxSessionIDRefreshIntervalMinute,
 	)
 
+	if cfg.GenerateOption.UseSessionIDRefresh {
+		go spanAttrGen.StartSessionIDRefreshTimer(ctx)
+	}
+
 	return &SpanGenerator{
-		serviceType:                serviceType,
+		serviceType:                spanAttrGen.ServiceType,
 		attrGenerator:              spanAttrGen,
 		userID:                     spanAttrGen.GetRandomUserID(),
 		actionGen:                  spanaction.NewActionGenerator(spanAttrGen),

@@ -34,7 +34,7 @@ func main() {
 	var wg sync.WaitGroup
 	for i := 0; i < cfg.GoroutineCount; i++ {
 		wg.Add(1)
-		tg, err := generator.NewTraceGenerator(i, batchProcessor, resourceGenerator, cfg)
+		tg, err := generator.NewTraceGenerator(mainCtx, i, batchProcessor, resourceGenerator, cfg)
 		if err != nil {
 			log.Printf("failed to create trace generator:%v", err)
 			wg.Done()

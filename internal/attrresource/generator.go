@@ -6,8 +6,10 @@ type AttributeSourceByServiceType interface {
 	GetAttributes(serviceType ServiceType) []string
 }
 type ResourceAttrGenerator struct {
-	Services []Service
-	OSNames  ResourceAttributeOSName
+	Services               []Service
+	OSNames                ResourceAttributeOSName
+	OSVersions             ResourceAttributeOSVersion
+	DeviceModelIdentifiers ResourceAttributeDeviceModelIdentifier
 }
 
 func NewResourceAttrGenerator(services []Service, resourceAttr ResourceAttributes) *ResourceAttrGenerator {
@@ -23,6 +25,8 @@ func GetAttributeByServiceType[T AttributeSourceByServiceType](serviceType Servi
 
 func (rg *ResourceAttrGenerator) SetPopulateAttribute(serviceType ServiceType) []attribute.KeyValue {
 	return []attribute.KeyValue{
-		rg.OSNameRandomGenerate(serviceType),
+		rg.GenerateRandomOSName(serviceType),
+		rg.GenerateRandomOSVersion(serviceType),
+		rg.GenerateRandomDeviceModelIdentifier(serviceType),
 	}
 }

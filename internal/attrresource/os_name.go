@@ -30,7 +30,7 @@ func (rg *ResourceAttrGenerator) SetAttrOSName(val string) attribute.KeyValue {
 	return semconv.OSName(val)
 }
 
-func (rg *ResourceAttrGenerator) OSNameRandomGenerate(serviceType ServiceType) attribute.KeyValue {
+func (rg *ResourceAttrGenerator) GenerateRandomOSName(serviceType ServiceType) attribute.KeyValue {
 	osNames := GetAttributeByServiceType[ResourceAttributeOSName](serviceType, rg.OSNames)
 	osName, ok := util.PickRandomElementFromSlice[string](osNames)
 	if !ok {

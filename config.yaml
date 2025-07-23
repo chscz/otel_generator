@@ -6,7 +6,7 @@ collector_url: "http://localhost:4318"
 # 현재 go routine 하나 당 세션 ID 하나로 생성됨. (세션아이디 주기적 갱신 아직 없음)
 go_routine_count: 2000
 # userID 가지 수
-user_count: 700
+user_count: 2000
 generate:
   # false: 트레이스 생성시 처음 정해진 주기로 동일한 간격 생성
   # - trace_interval_min_seconds ~ trace_interval_max_seconds 사이 값으로 랜덤으로 지정되지만 한 번 지정되면 지정된 간격으로 주기적으로 생성
@@ -17,6 +17,10 @@ generate:
   max_trace_interval_second: 100
   max_child_span_count: 8
   max_span_duration_millisecond: 4321
+  # session id refresh option
+  use_session_id_refresh: false
+  min_session_id_refresh_interval_minute: 60
+  max_session_id_refresh_interval_minute: 360
 
 services:
   # ios
@@ -76,21 +80,48 @@ resource_attribute:
       - "Android"
       - "iOS"
       - "Windows"
+      - "macOS"
   os_version:
     android:
-      - "13"
       - "14"
-      - "15"
-      - "16"
-      - "17"
-      - "18"
-      - "19"
-      - "20"
+      - "13"
+      - "12"
+      - "11"
+      - "10"
     ios:
-      - "iOS"
+      - "18.0"
+      - "17.6"
+      - "17.5.1"
+      - "17.4"
+      - "16.7"
+      - "15.8.2"
     web:
-      - "Android"
-      - "iOS"
+  device_model_identifier:
+    android:
+      - "SM-S928N" # Galaxy S24 Ultra
+      - "SM-S918N" # Galaxy S23 Ultra
+      - "SM-G998B" # Galaxy S21 Ultra
+      - "SM-F946N" # Galaxy Z Fold 5
+      - "SM-F731N" # Galaxy Z Flip 5
+      - "SM-A546S" # Galaxy A54
+      - "SM-T870"  # Galaxy Tab S7
+      - "LM-V600N" # LG V60 ThinQ
+      - "pixel 8 pro"
+      - "pixel 7"
+      - "pixel 6a"
+      - "2201116SG" # Xiaomi Poco X4 Pro
+      - "23049PCD8G" # Xiaomi Poco F5
+    ios:
+      - "iPhone16,2" # iPhone 15 Pro Max
+      - "iPhone15,2" # iPhone 14 Pro
+      - "iPhone14,5" # iPhone 13
+      - "iPhone13,4" # iPhone 12 Pro Max
+      - "iPhone12,1" # iPhone 11
+      - "iPhone14,6" # iPhone SE (3rd generation)
+      - "iPad14,6"   # iPad Pro 12.9-inch (6th generation)
+      - "iPad13,17"  # iPad Air (5th generation)
+      - "iPad8,1"    # iPad Pro 11-inch (1st generation)
+    web:
 
 span_attribute:
   screen_names:

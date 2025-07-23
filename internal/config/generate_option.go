@@ -14,11 +14,14 @@ var (
 )
 
 type GenerateOption struct {
-	UseDynamicInterval         bool `yaml:"use_dynamic_interval"`
-	MinTraceIntervalSecond     int  `yaml:"min_trace_interval_second"`
-	MaxTraceIntervalSecond     int  `yaml:"max_trace_interval_second"`
-	MaxChildSpanCount          int  `yaml:"max_child_span_count"`
-	MaxSpanDurationMilliSecond int  `yaml:"max_span_duration_millisecond"`
+	UseDynamicInterval                bool `yaml:"use_dynamic_interval"`
+	MinTraceIntervalSecond            int  `yaml:"min_trace_interval_second"`
+	MaxTraceIntervalSecond            int  `yaml:"max_trace_interval_second"`
+	MaxChildSpanCount                 int  `yaml:"max_child_span_count"`
+	MaxSpanDurationMilliSecond        int  `yaml:"max_span_duration_millisecond"`
+	UseSessionIDRefresh               bool `yaml:"use_session_id_refresh"`
+	MinSessionIDRefreshIntervalMinute int  `yaml:"min_session_id_refresh_interval_minute"`
+	MaxSessionIDRefreshIntervalMinute int  `yaml:"max_session_id_refresh_interval_minute"`
 }
 
 func (g *GenerateOption) validate() error {
@@ -27,7 +30,7 @@ func (g *GenerateOption) validate() error {
 	}
 	if g.MinTraceIntervalSecond > g.MaxTraceIntervalSecond {
 		return fmt.Errorf(
-			"최소 간격(%d)이 최대 간격(%d)보다 클 수 없습니다",
+			"trace_interval 의 최소 간격(%d)이 최대 간격(%d)보다 클 수 없습니다",
 			g.MinTraceIntervalSecond,
 			g.MaxTraceIntervalSecond,
 		)
@@ -44,6 +47,13 @@ func (g *GenerateOption) validate() error {
 	}
 	if g.MaxSpanDurationMilliSecond < 0 {
 		return fmt.Errorf("")
+	}
+	if g.MinSessionIDRefreshIntervalMinute > g.MinSessionIDRefreshIntervalMinute {
+		return fmt.Errorf(
+			"session_id_refresh_interval 의 최소 간격(%d)이 최대 간격(%d)보다 클 수 없습니다",
+			g.MinSessionIDRefreshIntervalMinute,
+			g.MaxSessionIDRefreshIntervalMinute,
+		)
 	}
 	return nil
 }
