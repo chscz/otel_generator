@@ -8,16 +8,16 @@ import (
 	semconv "go.opentelemetry.io/otel/semconv/v1.30.0"
 )
 
-func (sg *SpanAttrGenerator) UserIDKey(val string) attribute.KeyValue {
+func (sg *SpanAttrGenerator) SetAttrUserID(val string) attribute.KeyValue {
 	return semconv.UserID(val)
 }
 
-func (sg *SpanAttrGenerator) UserIDRandomGenerate() attribute.KeyValue {
+func (sg *SpanAttrGenerator) GenerateRandomUserID() attribute.KeyValue {
 	return semconv.UserID(shortid.MustGenerate())
 }
 
 func (sg *SpanAttrGenerator) GetRandomUserID() string {
-	userID, ok := util.RandomElementFromSlice(sg.UserIDs)
+	userID, ok := util.PickRandomElementFromSlice[string](sg.UserIDs)
 	if !ok {
 		return ""
 	}

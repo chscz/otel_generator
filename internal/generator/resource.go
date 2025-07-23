@@ -32,13 +32,16 @@ type ResourceInfo struct {
 
 func (r *ResourceGenerator) GenerateResource() (*resource.Resource, ResourceInfo) {
 	service := r.attrGenerator.PickServiceRandom()
+
 	attrs := []attribute.KeyValue{
 		semconv.ServiceName(service.Name),
 		semconv.ServiceVersion(service.Version),
-		attrresource.SetServiceKeyAttr(service.Key),
-		attrresource.SetServiceTypeAttr(service.Type),
-		r.attrGenerator.SetOSNameAttr(service.Type),
+		r.attrGenerator.SetAttrServiceKey(service.Key),
+		r.attrGenerator.SetAttrServiceType(service.Type),
 	}
+
+	populateAttrs := r.attrGenerator.SetPopulateAttribute(service.Type)
+	attrs = append(attrs, populateAttrs...)
 
 	rs, err := resource.Merge(
 		resource.Default(),

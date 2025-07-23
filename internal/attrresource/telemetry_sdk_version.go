@@ -5,6 +5,6 @@ import (
 	semconv "go.opentelemetry.io/otel/semconv/v1.30.0"
 )
 
-func TelemetrySDKVersion(val string) attribute.KeyValue {
+func SetAttrTelemetrySDKVersion(val string) attribute.KeyValue {
 	return semconv.TelemetrySDKVersion(val)
 }

@@ -8,12 +8,12 @@ import (
 
 const SpanAttributeSpanTypeKey = attribute.Key("span.type")
 
-func (sg *SpanAttrGenerator) SpanTypeKey(val SpanAttrSpanType) attribute.KeyValue {
+func (sg *SpanAttrGenerator) SetAttrSpanType(val SpanAttrSpanType) attribute.KeyValue {
 	return SpanAttributeSpanTypeKey.String(string(val))
 }
 
-func (sg *SpanAttrGenerator) SpanTypeRandomGenerate() attribute.KeyValue {
-	return sg.SpanTypeKey(sg.getWeightedRandomSpanType())
+func (sg *SpanAttrGenerator) GenerateRandomSpanType() attribute.KeyValue {
+	return sg.SetAttrSpanType(sg.getWeightedRandomSpanType())
 }
 
 type SpanAttrSpanType string
@@ -56,13 +56,13 @@ func (sg *SpanAttrGenerator) getWeightedRandomSpanType() SpanAttrSpanType {
 func setWeightedRandomSpanType() []spanTypeChoice {
 	return []spanTypeChoice{
 		{spanType: SpanAttrSpanTypeXHR, Weight: 100},
-		//{spanType: SpanAttrSpanTypeRender, Weight: 70},
-		//{spanType: SpanAttrSpanTypeLog, Weight: 5},
-		//{spanType: SpanAttrSpanTypeEvent, Weight: 60},
-		//{spanType: SpanAttrSpanTypeANR, Weight: 1},
-		//{spanType: SpanAttrSpanTypeCrash, Weight: 1},
-		//{spanType: SpanAttrSpanTypeError, Weight: 1},
-		//{spanType: SpanAttrSpanTypeWebVitals, Weight: 5},
+		{spanType: SpanAttrSpanTypeRender, Weight: 70},
+		{spanType: SpanAttrSpanTypeLog, Weight: 5},
+		{spanType: SpanAttrSpanTypeEvent, Weight: 60},
+		{spanType: SpanAttrSpanTypeANR, Weight: 1},
+		{spanType: SpanAttrSpanTypeCrash, Weight: 1},
+		{spanType: SpanAttrSpanTypeError, Weight: 1},
+		{spanType: SpanAttrSpanTypeWebVitals, Weight: 5},
 	}
 }
 

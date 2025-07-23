@@ -9,12 +9,12 @@ import (
 )
 
 type XHRAttribute interface {
-	HTTPMethodKey(val string) attribute.KeyValue
-	HTTPMethodRandomGenerate() attribute.KeyValue
-	HTTPURLKey(url, host, method string) []attribute.KeyValue
-	HTTPURLRandomGenerate() []attribute.KeyValue
-	HTTPStatusCodeKey(val int) attribute.KeyValue
-	HTTPStatusCodeRandomGenerate() attribute.KeyValue
+	SetAttrHTTPMethod(val string) attribute.KeyValue
+	GenerateRandomHTTPMethod() attribute.KeyValue
+	SetAttrHTTPURL(url string) attribute.KeyValue
+	GenerateRandomHTTPURL() []attribute.KeyValue
+	SetAttrHTTPStatusCode(val int) attribute.KeyValue
+	GenerateRandomHTTPStatusCode() attribute.KeyValue
 }
 
 type XHR struct {
@@ -26,40 +26,13 @@ func NewXHR(attrGenerator XHRAttribute) *XHR {
 	return &XHR{spanType: attrspan.SpanAttrSpanTypeXHR, Attr: attrGenerator}
 }
 
-//func (x *XHR) SetSpanAttribute(span trace.Span) {
-//	span.SetAttributes(x.HTTPURLRandomGenerate()...)
-//}
-
 func (x *XHR) Generate() ([]attribute.KeyValue, string) {
-	method := x.Attr.HTTPMethodRandomGenerate()
+	method := x.Attr.GenerateRandomHTTPMethod()
+	statusCode := x.Attr.GenerateRandomHTTPStatusCode()
 	attrs := []attribute.KeyValue{
 		method,
-		x.Attr.HTTPStatusCodeRandomGenerate(),
+		statusCode,
 	}
-	attrs = append(attrs, x.Attr.HTTPURLRandomGenerate()...)
+	attrs = append(attrs, x.Attr.GenerateRandomHTTPURL()...)
 	return attrs, fmt.Sprintf("http %s", method.Value.AsString())
 }
-
-//func (x *XHR) HTTPMethodKey(val string) attribute.KeyValue {
-//	return x.attr.HTTPMethodKey(val)
-//}
-
-//func (x *XHR) HTTPMethodRandomGenerate() attribute.KeyValue {
-//	return x.attr.HTTPMethodRandomGenerate()
-//}
-
-//func (x *XHR) HTTPURLKey(url, host, method string) []attribute.KeyValue {
-//	return x.attr.HTTPURLKey(url, host, method)
-//}
-
-//func (x *XHR) HTTPURLRandomGenerate() []attribute.KeyValue {
-//	return x.attr.HTTPURLRandomGenerate()
-//}
-
-//func (x *XHR) HTTPStatusCodeKey(val int) attribute.KeyValue {
-//	return x.attr.HTTPStatusCodeKey(val)
-//}
-
-//func (x *XHR) HTTPStatusCodeRandomGenerate() attribute.KeyValue {
-//	return x.attr.HTTPStatusCodeRandomGenerate()
-//}

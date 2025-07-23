@@ -10,11 +10,11 @@ import (
 
 const SpanAttributeScreenTypeKey = attribute.Key("screen.type")
 
-func (sg *SpanAttrGenerator) ScreenTypeKey(val string) attribute.KeyValue {
+func (sg *SpanAttrGenerator) SetAttrScreenType(val string) attribute.KeyValue {
 	return SpanAttributeScreenTypeKey.String(val)
 }
 
-func (sg *SpanAttrGenerator) ScreenTypeRandomGenerate() attribute.KeyValue {
+func (sg *SpanAttrGenerator) GenerateRandomScreenType() attribute.KeyValue {
 	screenTypeMap := GenerateScreenTypeMocks()
 	screenTypes, ok := screenTypeMap[sg.ServiceType]
 	if !ok || len(screenTypes) == 0 {

@@ -9,9 +9,9 @@ import (
 )
 
 type AnrAttribute interface {
-	ExceptionTypeRandomGenerate(spanType attrspan.SpanAttrSpanType) attribute.KeyValue
-	ExceptionMessageRandomGenerate(spanType attrspan.SpanAttrSpanType) attribute.KeyValue
-	ExceptionStackTraceRandomGenerate(spanType attrspan.SpanAttrSpanType) attribute.KeyValue
+	GenerateRandomExceptionType(spanType attrspan.SpanAttrSpanType) attribute.KeyValue
+	GenerateRandomExceptionMessage(spanType attrspan.SpanAttrSpanType) attribute.KeyValue
+	GenerateRandomExceptionStackTrace(spanType attrspan.SpanAttrSpanType) attribute.KeyValue
 }
 type Anr struct {
 	spanType attrspan.SpanAttrSpanType
@@ -24,9 +24,9 @@ func NewAnr(attrGenerator AnrAttribute) *Anr {
 
 func (a *Anr) Generate() ([]attribute.KeyValue, string) {
 	attrs := []attribute.KeyValue{
-		a.attr.ExceptionTypeRandomGenerate(a.spanType),
-		a.attr.ExceptionMessageRandomGenerate(a.spanType),
-		a.attr.ExceptionStackTraceRandomGenerate(a.spanType),
+		a.attr.GenerateRandomExceptionType(a.spanType),
+		a.attr.GenerateRandomExceptionMessage(a.spanType),
+		a.attr.GenerateRandomExceptionStackTrace(a.spanType),
 	}
 	return attrs, fmt.Sprintf("anr!!")
 }

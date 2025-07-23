@@ -29,20 +29,20 @@ func (es SpanAttributeExceptionStackTrace) GetAttributes(serviceType attrresourc
 	}
 }
 
-func (sg *SpanAttrGenerator) ExceptionStackTraceKey(val string) attribute.KeyValue {
+func (sg *SpanAttrGenerator) SetAttrExceptionStackTrace(val string) attribute.KeyValue {
 	return semconv.ExceptionStacktrace(val)
 }
 
-func (sg *SpanAttrGenerator) ExceptionStackTraceRandomGenerate(spanType SpanAttrSpanType) attribute.KeyValue {
+func (sg *SpanAttrGenerator) GenerateRandomExceptionStackTrace(spanType SpanAttrSpanType) attribute.KeyValue {
 	var exceptionStackTraceBySpanType []string
 	for _, et := range sg.ExceptionStackTraces {
 		if strings.HasPrefix(et, string(spanType)) {
 			exceptionStackTraceBySpanType = append(exceptionStackTraceBySpanType, et)
 		}
 	}
-	pick, ok := util.RandomElementFromSlice[string](exceptionStackTraceBySpanType)
+	pick, ok := util.PickRandomElementFromSlice[string](exceptionStackTraceBySpanType)
 	if !ok {
 		return attribute.KeyValue{}
 	}
-	return sg.ExceptionStackTraceKey(pick)
+	return sg.SetAttrExceptionStackTrace(pick)
 }

@@ -9,9 +9,9 @@ import (
 )
 
 type CrashAttribute interface {
-	ExceptionTypeRandomGenerate(spanType attrspan.SpanAttrSpanType) attribute.KeyValue
-	ExceptionMessageRandomGenerate(spanType attrspan.SpanAttrSpanType) attribute.KeyValue
-	ExceptionStackTraceRandomGenerate(spanType attrspan.SpanAttrSpanType) attribute.KeyValue
+	GenerateRandomExceptionType(spanType attrspan.SpanAttrSpanType) attribute.KeyValue
+	GenerateRandomExceptionMessage(spanType attrspan.SpanAttrSpanType) attribute.KeyValue
+	GenerateRandomExceptionStackTrace(spanType attrspan.SpanAttrSpanType) attribute.KeyValue
 }
 
 type Crash struct {
@@ -25,9 +25,9 @@ func NewCrash(attrGenerator CrashAttribute) *Crash {
 
 func (c *Crash) Generate() ([]attribute.KeyValue, string) {
 	attrs := []attribute.KeyValue{
-		c.attr.ExceptionTypeRandomGenerate(c.spanType),
-		c.attr.ExceptionMessageRandomGenerate(c.spanType),
-		c.attr.ExceptionStackTraceRandomGenerate(c.spanType),
+		c.attr.GenerateRandomExceptionType(c.spanType),
+		c.attr.GenerateRandomExceptionMessage(c.spanType),
+		c.attr.GenerateRandomExceptionStackTrace(c.spanType),
 	}
 	return attrs, fmt.Sprintf("crash!!")
 }

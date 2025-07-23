@@ -29,20 +29,20 @@ func (em SpanAttributeExceptionMessage) GetAttributes(serviceType attrresource.S
 	}
 }
 
-func (sg *SpanAttrGenerator) ExceptionMessageKey(val string) attribute.KeyValue {
+func (sg *SpanAttrGenerator) SetAttrExceptionMessage(val string) attribute.KeyValue {
 	return semconv.ExceptionMessage(val)
 }
 
-func (sg *SpanAttrGenerator) ExceptionMessageRandomGenerate(spanType SpanAttrSpanType) attribute.KeyValue {
+func (sg *SpanAttrGenerator) GenerateRandomExceptionMessage(spanType SpanAttrSpanType) attribute.KeyValue {
 	var exceptionMessagesBySpanType []string
 	for _, et := range sg.ExceptionMessages {
 		if strings.HasPrefix(et, string(spanType)) {
 			exceptionMessagesBySpanType = append(exceptionMessagesBySpanType, et)
 		}
 	}
-	pick, ok := util.RandomElementFromSlice[string](exceptionMessagesBySpanType)
+	pick, ok := util.PickRandomElementFromSlice[string](exceptionMessagesBySpanType)
 	if !ok {
 		return attribute.KeyValue{}
 	}
-	return sg.ExceptionMessageKey(pick)
+	return sg.SetAttrExceptionMessage(pick)
 }

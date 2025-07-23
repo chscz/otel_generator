@@ -1,17 +1,11 @@
 package attrresource
 
 import (
-	"strings"
-
 	"otel-generator/internal/util"
 
 	"go.opentelemetry.io/otel/attribute"
 	semconv "go.opentelemetry.io/otel/semconv/v1.30.0"
 )
-
-func OSNameKey(val string) attribute.KeyValue {
-	return semconv.OSName(val)
-}
 
 type ResourceAttributeOSName struct {
 	Android []string `yaml:"android"`
@@ -19,19 +13,28 @@ type ResourceAttributeOSName struct {
 	Web     []string `yaml:"web"`
 }
 
-func (rg *ResourceAttrGenerator) SetOSNameAttr(serviceType ServiceType) attribute.KeyValue {
-	var pick string
-	var ok bool
-	switch ServiceType(strings.ToUpper(string(serviceType))) {
+func (on ResourceAttributeOSName) GetAttributes(serviceType ServiceType) []string {
+	switch serviceType {
 	case ServiceTypeAndroid:
-		pick, ok = util.RandomElementFromSlice(rg.OSNames.Android)
+		return on.Android
 	case ServiceTypeIOS:
-		pick, ok = util.RandomElementFromSlice(rg.OSNames.IOS)
+		return on.IOS
 	case ServiceTypeWeb:
-		pick, ok = util.RandomElementFromSlice(rg.OSNames.Web)
+		return on.Web
+	default:
+		return nil
 	}
+}
+
+func (rg *ResourceAttrGenerator) SetAttrOSName(val string) attribute.KeyValue {
+	return semconv.OSName(val)
+}
+
+func (rg *ResourceAttrGenerator) OSNameRandomGenerate(serviceType ServiceType) attribute.KeyValue {
+	osNames := GetAttributeByServiceType[ResourceAttributeOSName](serviceType, rg.OSNames)
+	osName, ok := util.PickRandomElementFromSlice[string](osNames)
 	if !ok {
 		return attribute.KeyValue{}
 	}
-	return OSNameKey(pick)
+	return rg.SetAttrOSName(osName)
 }

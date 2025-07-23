@@ -2,7 +2,7 @@ package util
 
 import "math/rand"
 
-func RandomElementFromSlice[T string | int](slice []T) (T, bool) {
+func PickRandomElementFromSlice[T string | int](slice []T) (T, bool) {
 	if len(slice) == 0 {
 		var zero T
 		return zero, false

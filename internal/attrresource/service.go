@@ -27,15 +27,11 @@ const (
 	ResourceAttributeServiceType = attribute.Key("imqa.service.type")
 )
 
-func (rg *ResourceAttrGenerator) SetServiceTypeAttr() {
-
-}
-
-func SetServiceTypeAttr(val ServiceType) attribute.KeyValue {
+func (rg *ResourceAttrGenerator) SetAttrServiceType(val ServiceType) attribute.KeyValue {
 	return ResourceAttributeServiceType.String(string(val))
 }
 
-func SetServiceKeyAttr(val string) attribute.KeyValue {
+func (rg *ResourceAttrGenerator) SetAttrServiceKey(val string) attribute.KeyValue {
 	return ResourceAttributeServiceKey.String(val)
 }
 
@@ -65,7 +61,7 @@ func (rg *ResourceAttrGenerator) PickServiceRandom() Service {
 	//return []attribute.KeyValue{
 	//	semconv.ServiceName(service.Name),
 	//	semconv.ServiceVersion(service.Version),
-	//	SetServiceKeyAttr(service.Key),
-	//	SetServiceTypeAttr(service.Type),
+	//	SetAttrServiceKey(service.Key),
+	//	SetAttrServiceType(service.Type),
 	//}
 }

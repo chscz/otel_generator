@@ -7,11 +7,11 @@ import (
 	semconv "go.opentelemetry.io/otel/semconv/v1.25.0"
 )
 
-func (sg *SpanAttrGenerator) HTTPStatusCodeKey(val int) attribute.KeyValue {
+func (sg *SpanAttrGenerator) SetAttrHTTPStatusCode(val int) attribute.KeyValue {
 	return semconv.HTTPStatusCode(val)
 }
 
-func (sg *SpanAttrGenerator) HTTPStatusCodeRandomGenerate() attribute.KeyValue {
+func (sg *SpanAttrGenerator) GenerateRandomHTTPStatusCode() attribute.KeyValue {
 	return semconv.HTTPStatusCode(sg.getWeightedRandomHttpStatusCode())
 }
 

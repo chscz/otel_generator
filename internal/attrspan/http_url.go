@@ -10,21 +10,12 @@ import (
 	semconv "go.opentelemetry.io/otel/semconv/v1.30.0"
 )
 
-//type SpanAttributeHTTPURL struct {
-//	HTTPURLs []string `mapstructure:"http_urls"`
-//}
-
-func (sg *SpanAttrGenerator) HTTPURLKey(url, host, method string) []attribute.KeyValue {
-
-	return []attribute.KeyValue{
-		semconv.URLFull(url),
-		semconv12.HTTPHostKey.String(host),
-		semconv12.HTTPMethodKey.String(method),
-	}
+func (sg *SpanAttrGenerator) SetAttrHTTPURL(val string) attribute.KeyValue {
+	return semconv.URLFull(val)
 }
 
-func (sg *SpanAttrGenerator) HTTPURLRandomGenerate() []attribute.KeyValue {
-	urlFull, ok := util.RandomElementFromSlice[string](sg.HTTPURLs)
+func (sg *SpanAttrGenerator) GenerateRandomHTTPURL() []attribute.KeyValue {
+	urlFull, ok := util.PickRandomElementFromSlice[string](sg.HTTPURLs)
 	if !ok {
 		return nil
 	}

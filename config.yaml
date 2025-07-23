@@ -76,18 +76,40 @@ resource_attribute:
       - "Android"
       - "iOS"
       - "Windows"
+  os_version:
+    android:
+      - "13"
+      - "14"
+      - "15"
+      - "16"
+      - "17"
+      - "18"
+      - "19"
+      - "20"
+    ios:
+      - "iOS"
+    web:
+      - "Android"
+      - "iOS"
 
 span_attribute:
   screen_names:
     android:
       - "MainActivity"
-      - "android-test-screen-name-1"
-      - "android-test-screen-name-2"
-      - "android-test-screen-name-3"
+      - "and-test-screen-name-1"
+      - "and-test-screen-name-2"
+      - "and-test-screen-name-3"
+      - "and-test-screen-name-4"
+      - "and-test-screen-name-5"
+      - "and-test-screen-name-6"
     ios:
       - "ios-test-screen-name-1"
       - "ios-test-screen-name-2"
       - "ios-test-screen-name-3"
+      - "ios-test-screen-name-4"
+      - "ios-test-screen-name-5"
+      - "ios-test-screen-name-6"
+      - "ios-test-screen-name-7"
     web:
       - "web-test-screen-name-1"
       - "web-test-screen-name-2"

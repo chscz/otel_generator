@@ -9,9 +9,9 @@ import (
 )
 
 type ErrorAttribute interface {
-	ExceptionTypeRandomGenerate(spanType attrspan.SpanAttrSpanType) attribute.KeyValue
-	ExceptionMessageRandomGenerate(spanType attrspan.SpanAttrSpanType) attribute.KeyValue
-	ExceptionStackTraceRandomGenerate(spanType attrspan.SpanAttrSpanType) attribute.KeyValue
+	GenerateRandomExceptionType(spanType attrspan.SpanAttrSpanType) attribute.KeyValue
+	GenerateRandomExceptionMessage(spanType attrspan.SpanAttrSpanType) attribute.KeyValue
+	GenerateRandomExceptionStackTrace(spanType attrspan.SpanAttrSpanType) attribute.KeyValue
 }
 
 type Error struct {
@@ -25,9 +25,9 @@ func NewError(attrGenerator ErrorAttribute) *Error {
 
 func (e *Error) Generate() ([]attribute.KeyValue, string) {
 	attrs := []attribute.KeyValue{
-		e.attr.ExceptionTypeRandomGenerate(e.spanType),
-		e.attr.ExceptionMessageRandomGenerate(e.spanType),
-		e.attr.ExceptionStackTraceRandomGenerate(e.spanType),
+		e.attr.GenerateRandomExceptionType(e.spanType),
+		e.attr.GenerateRandomExceptionMessage(e.spanType),
+		e.attr.GenerateRandomExceptionStackTrace(e.spanType),
 	}
 	return attrs, fmt.Sprintf("error!!")
 }

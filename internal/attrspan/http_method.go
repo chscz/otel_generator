@@ -10,12 +10,12 @@ import (
 
 const SpanHTTPMethodKey = attribute.Key("http.method")
 
-func (sg *SpanAttrGenerator) HTTPMethodKey(val string) attribute.KeyValue {
+func (sg *SpanAttrGenerator) SetAttrHTTPMethod(val string) attribute.KeyValue {
 	return semconv.HTTPMethod(val)
 }
 
-func (sg *SpanAttrGenerator) HTTPMethodRandomGenerate() attribute.KeyValue {
-	return sg.HTTPMethodKey(sg.getWeightedRandomHttpMethod())
+func (sg *SpanAttrGenerator) GenerateRandomHTTPMethod() attribute.KeyValue {
+	return sg.SetAttrHTTPMethod(sg.getWeightedRandomHttpMethod())
 }
 
 type httpMethodChoice struct {

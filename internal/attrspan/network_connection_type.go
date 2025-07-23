@@ -7,7 +7,7 @@ import (
 	semconv "go.opentelemetry.io/otel/semconv/v1.25.0"
 )
 
-func (sg *SpanAttrGenerator) NetworkConnectionTypeRandomGenerate() attribute.KeyValue {
+func (sg *SpanAttrGenerator) GenerateRandomNetworkConnectionType() attribute.KeyValue {
 	return sg.getWeightedRandomNetworkConnectionType()
 }
 

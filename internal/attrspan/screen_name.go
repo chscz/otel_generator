@@ -28,18 +28,18 @@ func (sn SpanAttributeScreenName) GetAttributes(serviceType attrresource.Service
 	}
 }
 
-func (sg *SpanAttrGenerator) ScreenNameKey(val string) attribute.KeyValue {
+func (sg *SpanAttrGenerator) SetAttrScreenName(val string) attribute.KeyValue {
 	return SpanAttributeScreenNameKey.String(val)
 }
 
-func (sg *SpanAttrGenerator) ScreenNameRandomGenerate() attribute.KeyValue {
+func (sg *SpanAttrGenerator) GenerateRandomScreenName() attribute.KeyValue {
 	if len(sg.ScreenNames) == 0 {
 		return attribute.KeyValue{}
 	}
 
-	pick, ok := util.RandomElementFromSlice(sg.ScreenNames)
+	pick, ok := util.PickRandomElementFromSlice[string](sg.ScreenNames)
 	if !ok {
 		return attribute.KeyValue{}
 	}
-	return sg.ScreenNameKey(pick)
+	return sg.SetAttrScreenName(pick)
 }

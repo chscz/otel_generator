@@ -68,7 +68,7 @@ func (s *SpanGenerator) GenerateChildSpan(parentCtx context.Context, parentAttr 
 }
 
 func (s *SpanGenerator) generateSpan(parentCtx context.Context) (context.Context, attrspan.SpanAttrSpanType, trace.Span) {
-	attrSpanType := attrspan.SpanAttrSpanType(s.attrGenerator.SpanTypeRandomGenerate().Value.AsString())
+	attrSpanType := attrspan.SpanAttrSpanType(s.attrGenerator.GenerateRandomSpanType().Value.AsString())
 	attrs, spanName := s.actionGen.Generate(attrSpanType)
 
 	var opt []trace.SpanStartOption

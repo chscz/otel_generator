@@ -6,6 +6,10 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
+type AttributeSourceByServiceType interface {
+	GetAttributes(serviceType attrresource.ServiceType) []string
+}
+
 type SpanAttrGenerator struct {
 	ServiceType           attrresource.ServiceType
 	SpanTypes             []spanTypeChoice
@@ -39,11 +43,11 @@ func NewSpanAttrGenerator(serviceType attrresource.ServiceType, spanAttrConfig S
 }
 
 func (sg *SpanAttrGenerator) SetPopulateParentSpanAttributes(span trace.Span, spanType SpanAttrSpanType, userID string) InheritedSpanAttr {
-	attrSpanType := sg.SpanTypeKey(spanType)
-	attrUserID := sg.UserIDKey(userID)
-	attrSessionID := sg.SessionIDKey(sg.SessionID)
-	attrScreenName := sg.ScreenNameRandomGenerate()
-	attrScreenType := sg.ScreenTypeRandomGenerate()
+	attrSpanType := sg.SetAttrSpanType(spanType)
+	attrUserID := sg.SetAttrUserID(userID)
+	attrSessionID := sg.SetAttrSessionID(sg.SessionID)
+	attrScreenName := sg.GenerateRandomScreenName()
+	attrScreenType := sg.GenerateRandomScreenType()
 
 	span.SetAttributes(
 		attrSpanType,
@@ -63,7 +67,7 @@ func (sg *SpanAttrGenerator) SetPopulateParentSpanAttributes(span trace.Span, sp
 
 func (sg *SpanAttrGenerator) SetPopulateChildSpanAttributes(span trace.Span, spanType SpanAttrSpanType, attr InheritedSpanAttr) {
 	span.SetAttributes(
-		sg.SpanTypeKey(spanType),
+		sg.SetAttrSpanType(spanType),
 		attr.UserID,
 		attr.SessionID,
 		attr.ScreenName,

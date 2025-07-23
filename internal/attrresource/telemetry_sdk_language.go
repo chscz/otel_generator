@@ -5,7 +5,7 @@ import (
 	semconv "go.opentelemetry.io/otel/semconv/v1.30.0"
 )
 
-func TelemetrySDKLanguage(val string) attribute.KeyValue {
+func SetAttrTelemetrySDKLanguage(val string) attribute.KeyValue {
 	switch ServiceType(val) {
 	case ServiceTypeAndroid:
 		return semconv.TelemetrySDKLanguageJava
