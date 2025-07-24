@@ -16,7 +16,7 @@ generate:
   min_trace_interval_second: 5
   max_trace_interval_second: 100
   max_child_span_count: 8
-  max_span_duration_millisecond: 4321
+  max_span_duration_millisecond: 5432
   # session id refresh option
   use_session_id_refresh: false
   min_session_id_refresh_interval_minute: 60
@@ -24,14 +24,14 @@ generate:
 
 services:
   # ios
+  - name: "ios1"
+  - version: "1.0.0"
+  - key: "service-key"
+  - type: "ios"
 #  - name: "ios1"
 #    version: "1.0.1"
 #    key: "service-key"
 #    type: "ios"
-  - name: "ios1"
-    version: "1.0.0"
-    key: "service-key"
-    type: "ios"
 #  - name: "ios1"
 #    version: "1.0.2"
 #    key: "service-key"
@@ -77,10 +77,10 @@ resource_attribute:
     ios:
       - "iOS"
     web:
-      - "Android"
-      - "iOS"
-      - "Windows"
-      - "macOS"
+#      - "Android"
+#      - "iOS"
+#      - "Windows"
+#      - "macOS"
   os_version:
     android:
       - "14"
