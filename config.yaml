@@ -8,26 +8,27 @@ go_routine_count: 2000
 # userID 가지 수
 user_count: 2000
 generate:
-  # false: 트레이스 생성시 처음 정해진 주기로 동일한 간격 생성
-  # - trace_interval_min_seconds ~ trace_interval_max_seconds 사이 값으로 랜덤으로 지정되지만 한 번 지정되면 지정된 간격으로 주기적으로 생성
-  # true: 트레이스 생성시 매번 생성마다 불규칙한 간격으로 생성
-  # - trace_interval_min_seconds ~ trace_interval_max_seconds 사이 값으로 트레이스 생성마다 매번 랜덤 간격
+  # use_dynamic_interval
+  # - false: 트레이스 생성시 처음 정해진 주기로 동일한 간격 생성
+  # --- trace_interval_min_seconds ~ trace_interval_max_seconds 사이 값으로 랜덤으로 지정되지만 한 번 지정되면 지정된 간격으로 주기적으로 생성
+  # -true: 트레이스 생성시 매번 생성마다 불규칙한 간격으로 생성
+  # --- trace_interval_min_seconds ~ trace_interval_max_seconds 사이 값으로 트레이스 생성마다 매번 랜덤 간격
   use_dynamic_interval: true
   min_trace_interval_second: 5
   max_trace_interval_second: 100
   max_child_span_count: 8
   max_span_duration_millisecond: 5432
   # session id refresh option
-  use_session_id_refresh: false
-  min_session_id_refresh_interval_minute: 60
-  max_session_id_refresh_interval_minute: 360
+  use_session_id_refresh: true
+  min_session_id_refresh_interval_minute: 30
+  max_session_id_refresh_interval_minute: 180
 
 services:
   # ios
   - name: "ios1"
-  - version: "1.0.0"
-  - key: "service-key"
-  - type: "ios"
+    version: "1.0.0"
+    key: "service-key"
+    type: "ios"
 #  - name: "ios1"
 #    version: "1.0.1"
 #    key: "service-key"

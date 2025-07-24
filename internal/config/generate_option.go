@@ -15,8 +15,8 @@ var (
 
 type GenerateOption struct {
 	UseDynamicInterval                bool `yaml:"use_dynamic_interval"`
-	MinTraceIntervalSecond            int  `yaml:"min_trace_interval_second"`
-	MaxTraceIntervalSecond            int  `yaml:"max_trace_interval_second"`
+	MinTraceIntervalSecond            int  `yaml:"min_trace_interval_second" env:"MIN_TRACE_INTERVAL_SECOND"`
+	MaxTraceIntervalSecond            int  `yaml:"max_trace_interval_second" env:"MAX_TRACE_INTERVAL_SECOND"`
 	MaxChildSpanCount                 int  `yaml:"max_child_span_count"`
 	MaxSpanDurationMilliSecond        int  `yaml:"max_span_duration_millisecond"`
 	UseSessionIDRefresh               bool `yaml:"use_session_id_refresh"`

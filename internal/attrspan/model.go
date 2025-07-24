@@ -5,11 +5,12 @@ import (
 )
 
 type InheritedSpanAttr struct {
-	SessionID  attribute.KeyValue
-	UserID     attribute.KeyValue
-	SpanType   attribute.KeyValue
-	ScreenName attribute.KeyValue
-	ScreenType attribute.KeyValue
+	SessionID             attribute.KeyValue
+	UserID                attribute.KeyValue
+	SpanType              attribute.KeyValue
+	ScreenName            attribute.KeyValue
+	ScreenType            attribute.KeyValue
+	NetworkConnectionType attribute.KeyValue
 }
 
 type SpanAttributes struct {

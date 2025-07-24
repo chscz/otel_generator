@@ -2,6 +2,7 @@ package attrresource
 
 import (
 	"math/rand"
+	"strings"
 
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -51,17 +52,8 @@ func GenerateServiceMocks() []Service {
 	}
 }
 
-//
-//func (rg *ResourceAttrGenerator) pickService(n int) attrresource.Service {
-//	return rg.Services[n]
-//}
-
 func (rg *ResourceAttrGenerator) PickServiceRandom() Service {
-	return rg.Services[rand.Intn(len(rg.Services))]
-	//return []attribute.KeyValue{
-	//	semconv.ServiceName(service.Name),
-	//	semconv.ServiceVersion(service.Version),
-	//	SetAttrServiceKey(service.Key),
-	//	SetAttrServiceType(service.Type),
-	//}
+	service := rg.Services[rand.Intn(len(rg.Services))]
+	service.Type = ServiceType(strings.ToUpper(string(service.Type)))
+	return service
 }

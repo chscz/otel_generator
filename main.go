@@ -32,7 +32,7 @@ func main() {
 	resourceGenerator := generator.NewResourceGenerator(cfg.Services, cfg.ResourceAttributes)
 
 	var wg sync.WaitGroup
-	for i := 0; i < cfg.GoroutineCount; i++ {
+	for i := 0; i < cfg.GoRoutineCount; i++ {
 		wg.Add(1)
 		tg, err := generator.NewTraceGenerator(mainCtx, i, batchProcessor, resourceGenerator, cfg)
 		if err != nil {

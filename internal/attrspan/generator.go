@@ -65,6 +65,7 @@ func (sg *SpanAttrGenerator) SetPopulateParentSpanAttributes(span trace.Span, sp
 	attrUserID := sg.SetAttrUserID(userID)
 	attrScreenName := sg.GenerateRandomScreenName()
 	attrScreenType := sg.GenerateRandomScreenType()
+	attrNetworkConnectionType := sg.GenerateRandomNetworkConnectionType()
 
 	if sg.needSessionRefresh {
 		beforeSessionID := sg.SessionID
@@ -80,13 +81,15 @@ func (sg *SpanAttrGenerator) SetPopulateParentSpanAttributes(span trace.Span, sp
 		attrSessionID,
 		attrScreenName,
 		attrScreenType,
+		attrNetworkConnectionType,
 	)
 	return InheritedSpanAttr{
-		SpanType:   attrSpanType,
-		UserID:     attrUserID,
-		SessionID:  attrSessionID,
-		ScreenName: attrScreenName,
-		ScreenType: attrScreenType,
+		SpanType:              attrSpanType,
+		UserID:                attrUserID,
+		SessionID:             attrSessionID,
+		ScreenName:            attrScreenName,
+		ScreenType:            attrScreenType,
+		NetworkConnectionType: attrNetworkConnectionType,
 	}
 }
 
@@ -97,6 +100,7 @@ func (sg *SpanAttrGenerator) SetPopulateChildSpanAttributes(span trace.Span, spa
 		attr.SessionID,
 		attr.ScreenName,
 		attr.ScreenType,
+		attr.NetworkConnectionType,
 	)
 }
 

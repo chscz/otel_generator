@@ -1,6 +1,10 @@
 package attrresource
 
-import "go.opentelemetry.io/otel/attribute"
+import (
+	"otel-generator/internal/util"
+
+	"go.opentelemetry.io/otel/attribute"
+)
 
 type AttributeSourceByServiceType interface {
 	GetAttributes(serviceType ServiceType) []string
@@ -14,8 +18,10 @@ type ResourceAttrGenerator struct {
 
 func NewResourceAttrGenerator(services []Service, resourceAttr ResourceAttributes) *ResourceAttrGenerator {
 	return &ResourceAttrGenerator{
-		Services: services,
-		OSNames:  resourceAttr.OSNames,
+		Services:               services,
+		OSNames:                resourceAttr.OSNames,
+		OSVersions:             resourceAttr.OSVersions,
+		DeviceModelIdentifiers: resourceAttr.DeviceModelIdentifier,
 	}
 }
 
@@ -24,9 +30,13 @@ func GetAttributeByServiceType[T AttributeSourceByServiceType](serviceType Servi
 }
 
 func (rg *ResourceAttrGenerator) SetPopulateAttribute(serviceType ServiceType) []attribute.KeyValue {
+	osVersion := rg.GenerateRandomOSVersion(serviceType)
+	major := util.GetMajorVersion(osVersion.Value.AsString())
+
 	return []attribute.KeyValue{
 		rg.GenerateRandomOSName(serviceType),
-		rg.GenerateRandomOSVersion(serviceType),
+		osVersion,
+		rg.SetAttrOSVersionMajor(major),
 		rg.GenerateRandomDeviceModelIdentifier(serviceType),
 	}
 }

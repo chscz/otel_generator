@@ -7,14 +7,15 @@ import (
 	"otel-generator/internal/attrresource"
 	"otel-generator/internal/attrspan"
 
+	"github.com/caarlos0/env/v11"
 	"gopkg.in/yaml.v2"
 )
 
 type Config struct {
-	CollectorURL       string                          `yaml:"collector_url"`
-	GoroutineCount     int                             `yaml:"go_routine_count"`
-	UserCount          int                             `yaml:"user_count"`
-	GenerateOption     GenerateOption                  `yaml:"generate"`
+	CollectorURL       string                          `yaml:"collector_url" env:"COLLECTOR_URL"`
+	GoRoutineCount     int                             `yaml:"go_routine_count" env:"GO_ROUTINE_COUNT"`
+	UserCount          int                             `yaml:"user_count" env:"USER_COUNT"`
+	GenerateOption     GenerateOption                  `yaml:"generate" envPrefix:"GENERATE_OPTION_"`
 	Services           []attrresource.Service          `yaml:"services"`
 	SpanAttributes     attrspan.SpanAttributes         `yaml:"span_attribute"`
 	ResourceAttributes attrresource.ResourceAttributes `yaml:"resource_attribute"`
@@ -23,7 +24,7 @@ type Config struct {
 func LoadConfig(configFilePath string) (*Config, error) {
 	cfg := &Config{
 		//CollectorURL:   "http://localhost:4318/v1/traces",
-		GoroutineCount: 0,
+		GoRoutineCount: 0,
 		UserCount:      0,
 		GenerateOption: GenerateOption{
 			UseDynamicInterval:         false,
@@ -57,7 +58,11 @@ func LoadConfig(configFilePath string) (*Config, error) {
 		return nil, err
 	}
 
-	if err := yaml.Unmarshal(b, &cfg); err != nil {
+	if err = yaml.Unmarshal(b, &cfg); err != nil {
+		return nil, err
+	}
+
+	if err = env.Parse(cfg); err != nil {
 		return nil, err
 	}
 
@@ -65,7 +70,7 @@ func LoadConfig(configFilePath string) (*Config, error) {
 }
 
 func (c *Config) validate() error {
-	if c.CollectorURL == "" || c.GoroutineCount <= 0 || c.UserCount <= 0 {
+	if c.CollectorURL == "" || c.GoRoutineCount <= 0 || c.UserCount <= 0 {
 		return fmt.Errorf("invalid config: collector_url, goroutine_count, user_count")
 	}
 	if len(c.Services) == 0 {

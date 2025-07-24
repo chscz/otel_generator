@@ -8,6 +8,6 @@ const (
 	ResourceAttributeOSVersionMajorKey = attribute.Key("os.version_major")
 )
 
-func SetAttrOSVersionMajor(val string) attribute.KeyValue {
+func (rg *ResourceAttrGenerator) SetAttrOSVersionMajor(val string) attribute.KeyValue {
 	return ResourceAttributeOSVersionMajorKey.String(val)
 }
