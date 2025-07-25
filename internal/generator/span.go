@@ -2,6 +2,7 @@ package generator
 
 import (
 	"context"
+	"log"
 	"math/rand"
 	"time"
 
@@ -25,7 +26,7 @@ type SpanGenerator struct {
 	maxSpanDurationMilliSecond int
 }
 
-func NewSpanGenerator(ctx context.Context, serviceType attrresource.ServiceType, cfg *config.Config, routineID int) *SpanGenerator {
+func NewSpanGenerator(ctx context.Context, serviceType attrresource.ServiceType, cfg *config.Config, routineID int, masterRand *rand.Rand) *SpanGenerator {
 	spanAttrGen := attrspan.NewSpanAttrGenerator(
 		serviceType,
 		cfg.SpanAttributes,
@@ -43,7 +44,7 @@ func NewSpanGenerator(ctx context.Context, serviceType attrresource.ServiceType,
 		attrGenerator:              spanAttrGen,
 		userID:                     spanAttrGen.GetRandomUserID(),
 		actionGen:                  spanaction.NewActionGenerator(spanAttrGen),
-		r:                          rand.New(rand.NewSource(time.Now().UnixNano() + int64(routineID))),
+		r:                          rand.New(rand.NewSource(masterRand.Int63())),
 		maxChildSpanCount:          cfg.GenerateOption.MaxChildSpanCount,
 		maxSpanDurationMilliSecond: cfg.GenerateOption.MaxSpanDurationMilliSecond,
 	}
@@ -51,14 +52,29 @@ func NewSpanGenerator(ctx context.Context, serviceType attrresource.ServiceType,
 
 func (s *SpanGenerator) GenerateTrace(mainCtx context.Context) {
 	parentCtx, rootSpan, inheritedAttr := s.GenerateParentSpan(mainCtx)
+	defer rootSpan.End()
 
 	for i := 0; i < s.r.Intn(s.maxChildSpanCount); i++ {
+		select {
+		case <-mainCtx.Done():
+			return
+		default:
+		}
+
 		childSpan := s.GenerateChildSpan(parentCtx, inheritedAttr)
+
 		randomDelay := time.Duration(s.r.Intn(s.maxSpanDurationMilliSecond)) * time.Millisecond
-		time.Sleep(randomDelay)
+		timer := time.NewTimer(randomDelay)
+		select {
+		case <-mainCtx.Done():
+			timer.Stop()
+			log.Printf("Trace generation interrupted during sleep. Finishing root span...")
+			return
+		case <-timer.C:
+		}
+
 		childSpan.End()
 	}
-	rootSpan.End()
 }
 
 func (s *SpanGenerator) GenerateParentSpan(parentCtx context.Context) (context.Context, trace.Span, attrspan.InheritedSpanAttr) {

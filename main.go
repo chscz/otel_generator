@@ -3,10 +3,12 @@ package main
 import (
 	"context"
 	"log"
+	"math/rand"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
+	"time"
 
 	"otel-generator/internal/config"
 	"otel-generator/internal/exporter"
@@ -31,10 +33,12 @@ func main() {
 
 	resourceGenerator := generator.NewResourceGenerator(cfg.Services, cfg.ResourceAttributes)
 
+	masterRand := rand.New(rand.NewSource(time.Now().UnixNano()))
+
 	var wg sync.WaitGroup
 	for i := 0; i < cfg.GoRoutineCount; i++ {
 		wg.Add(1)
-		tg, err := generator.NewTraceGenerator(mainCtx, i, batchProcessor, resourceGenerator, cfg)
+		tg, err := generator.NewTraceGenerator(mainCtx, i, batchProcessor, resourceGenerator, cfg, masterRand)
 		if err != nil {
 			log.Printf("failed to create trace generator:%v", err)
 			wg.Done()
