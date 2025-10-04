@@ -28,6 +28,7 @@ type ServiceInfo struct {
 	ServiceName    string
 	ServiceVersion string
 	ServiceType    attrresource.ServiceType
+	ServiceKey     string
 }
 
 func (r *ResourceGenerator) GenerateResource() (*resource.Resource, ServiceInfo) {

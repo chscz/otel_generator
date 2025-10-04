@@ -4,7 +4,7 @@ collector_url: "http://localhost:4318"
 #collector_url: "http://192.168.0.42:4318" # 다영
 
 # 현재 go routine 하나 당 세션 ID 하나로 생성됨. (세션아이디 주기적 갱신 아직 없음)
-go_routine_count: 2000
+go_routine_count: 300
 # userID 가지 수
 user_count: 2000
 generate:
@@ -27,7 +27,7 @@ services:
   # ios
   - name: "ios1"
     version: "1.0.0"
-    key: "service-key"
+    key: "E-ldOBKcGCSJ0W-KCTT6da6haJselZwnf4VQOGS-mpct5-kLwlsReKeaN8MADA.hZLa3MmavaVO7FJkHCdeoQ"
     type: "ios"
 #  - name: "ios1"
 #    version: "1.0.1"
@@ -47,8 +47,8 @@ services:
 #    key: "service-key"
 #    type: "android"
   - name: "and1"
-    version: "2.1.1"
-    key: "service-key"
+    version: "1.0.0"
+    key: "ElJJwfCnMkcJvUnzspexarKL2auKLycZEM6xoDr8yiQJkqzwHbOCwUk3GyKpvA.KkjYP0xozjOrkbJwCQ7QVg"
     type: "android"
 #  - name: "and2"
 #    version: "2.1.1"
@@ -59,15 +59,15 @@ services:
 #    key: "service-key"
 #    type: "android"
 ##   web
-#  - name: "test-service-web-1"
-#    version: "3.0.11"
-#    key: "service-key"
+#  - name: "web1"
+#    version: "1.0.0"
+#    key: "6uL46e_8SLokrBBQpxrSkAuuji2uFJQ7NIqwpDKWkj9TbNql2wxz-1Zxm-qKLw.o0SBcISsLnXSJetpE5ACqw"
 #    type: "web"
-#  - name: "test-service-web-1"
+#  - name: "web1"
 #    version: "3.0.12"
 #    key: "service-key"
 #    type: "web"
-#  - name: "test-service-web-1"
+#  - name: "web2"
 #    version: "3.2.1"
 #    key: "service-key"
 #    type: "web"
