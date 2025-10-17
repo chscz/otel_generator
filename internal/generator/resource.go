@@ -25,16 +25,18 @@ func NewResourceGenerator(services []attrresource.Service, attr attrresource.Res
 }
 
 type ServiceInfo struct {
-	ServiceName    string
-	ServiceVersion string
-	ServiceType    attrresource.ServiceType
-	ServiceKey     string
+	ServiceNamespace string
+	ServiceName      string
+	ServiceVersion   string
+	ServiceType      attrresource.ServiceType
+	ServiceKey       string
 }
 
 func (r *ResourceGenerator) GenerateResource() (*resource.Resource, ServiceInfo) {
 	service := r.attrGenerator.PickServiceRandom()
 
 	attrs := []attribute.KeyValue{
+		semconv.ServiceNamespace(service.Namespace),
 		semconv.ServiceName(service.Name),
 		semconv.ServiceVersion(service.Version),
 		r.attrGenerator.SetAttrServiceKey(service.Key),
@@ -56,12 +58,13 @@ func (r *ResourceGenerator) GenerateResource() (*resource.Resource, ServiceInfo)
 		return nil, ServiceInfo{}
 	}
 	return rs, ServiceInfo{
-		ServiceName:    service.Name,
-		ServiceVersion: service.Version,
-		ServiceType:    attrresource.ServiceType(strings.ToUpper(string(service.Type))),
+		ServiceNamespace: service.Namespace,
+		ServiceName:      service.Name,
+		ServiceVersion:   service.Version,
+		ServiceType:      attrresource.ServiceType(strings.ToUpper(string(service.Type))),
 	}
 }
 
 func (s ServiceInfo) String() string {
-	return fmt.Sprintf("%s@%s::%s", s.ServiceName, s.ServiceVersion, s.ServiceType)
+	return fmt.Sprintf("%s@%s@%s::%s", s.ServiceNamespace, s.ServiceName, s.ServiceVersion, s.ServiceType)
 }

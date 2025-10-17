@@ -16,10 +16,11 @@ const (
 )
 
 type Service struct {
-	Name    string      `yaml:"name"`
-	Version string      `yaml:"version"`
-	Type    ServiceType `yaml:"type"`
-	Key     string      `yaml:"key"`
+	Namespace string      `yaml:"namespace"`
+	Name      string      `yaml:"name"`
+	Version   string      `yaml:"version"`
+	Type      ServiceType `yaml:"type"`
+	Key       string      `yaml:"key"`
 }
 
 const (
