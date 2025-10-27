@@ -60,8 +60,8 @@ func setWeightedRandomSpanType() []spanTypeChoice {
 		{spanType: SpanAttrSpanTypeLog, Weight: 5},
 		{spanType: SpanAttrSpanTypeEvent, Weight: 100},
 		{spanType: SpanAttrSpanTypeANR, Weight: 1},
-		{spanType: SpanAttrSpanTypeCrash, Weight: 1},
-		{spanType: SpanAttrSpanTypeError, Weight: 1},
+		{spanType: SpanAttrSpanTypeCrash, Weight: 5},
+		{spanType: SpanAttrSpanTypeError, Weight: 8},
 		{spanType: SpanAttrSpanTypeWebVitals, Weight: 5},
 	}
 }
