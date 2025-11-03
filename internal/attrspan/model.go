@@ -11,6 +11,7 @@ type InheritedSpanAttr struct {
 	ScreenName            attribute.KeyValue
 	ScreenType            attribute.KeyValue
 	NetworkConnectionType attribute.KeyValue
+	WebVersion            attribute.KeyValue
 }
 
 type SpanAttributes struct {
@@ -20,4 +21,5 @@ type SpanAttributes struct {
 	ExceptionTypes       SpanAttributeExceptionType       `yaml:"exception_types"`
 	ExceptionMessages    SpanAttributeExceptionMessage    `yaml:"exception_messages"`
 	ExceptionStackTraces SpanAttributeExceptionStackTrace `yaml:"exception_stack_traces"`
+	WebVersions          []string                         `yaml:"web_versions"`
 }

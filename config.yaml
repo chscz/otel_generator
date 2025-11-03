@@ -4,7 +4,7 @@ collector_url: "http://localhost:4318"
 #collector_url: "http://192.168.0.42:4318" # 다영
 
 # 현재 go routine 하나 당 세션 ID 하나로 생성됨. (세션아이디 주기적 갱신 아직 없음)
-go_routine_count: 300
+go_routine_count: 1000
 # userID 가지 수
 user_count: 2000
 generate:
@@ -15,8 +15,8 @@ generate:
   # --- trace_interval_min_seconds ~ trace_interval_max_seconds 사이 값으로 트레이스 생성마다 매번 랜덤 간격
   use_dynamic_interval: true
   min_trace_interval_second: 5
-  max_trace_interval_second: 100
-  max_child_span_count: 8
+  max_trace_interval_second: 5
+  max_child_span_count: 30
   max_span_duration_millisecond: 5432
   # session id refresh option
   use_session_id_refresh: true
@@ -285,3 +285,15 @@ span_attribute:
       - "error-stack-trace 원!!"
       - "error-stack-trace 투!!"
       - "error-stack-trace 쓰리!!"
+  web_versions:
+    - ""
+    - "1.0.99"
+    - "1.0.8888"
+    - "1.0.777777"
+    - "3.2.1"
+    - "3.2.2"
+    - "3.2.3"
+    - "678.54.1234567"
+    - "678.54.1234568"
+    - "88889.96969.27829010"
+  

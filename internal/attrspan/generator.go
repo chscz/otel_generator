@@ -28,6 +28,7 @@ type SpanAttrGenerator struct {
 	ExceptionMessages     []string
 	ExceptionStackTraces  []string
 	NetworkConnectionType []networkConnectionTypeChoice
+	WebVersion            []string
 
 	needSessionRefresh                bool
 	TimerSessionRefresh               *time.Timer
@@ -53,6 +54,7 @@ func NewSpanAttrGenerator(
 		ExceptionMessages:                 getAttributeByServiceType[SpanAttributeExceptionMessage](serviceType, spanAttrConfig.ExceptionMessages),
 		ExceptionStackTraces:              getAttributeByServiceType[SpanAttributeExceptionStackTrace](serviceType, spanAttrConfig.ExceptionStackTraces),
 		NetworkConnectionType:             setWeightedRandomNetworkConnectionType(),
+		WebVersion:                        spanAttrConfig.WebVersions,
 		needSessionRefresh:                false,
 		TimerSessionRefresh:               nil,
 		minSessionIDRefreshIntervalMinute: minSessionIDRefreshIntervalMinute,
@@ -66,6 +68,7 @@ func (sg *SpanAttrGenerator) SetPopulateParentSpanAttributes(span trace.Span, sp
 	attrScreenName := sg.GenerateRandomScreenName()
 	attrScreenType := sg.GenerateRandomScreenType()
 	attrNetworkConnectionType := sg.GenerateRandomNetworkConnectionType()
+	attrWebVersion := sg.GenerateRandomWebVersion()
 
 	if sg.needSessionRefresh {
 		beforeSessionID := sg.SessionID
@@ -82,6 +85,7 @@ func (sg *SpanAttrGenerator) SetPopulateParentSpanAttributes(span trace.Span, sp
 		attrScreenName,
 		attrScreenType,
 		attrNetworkConnectionType,
+		attrWebVersion,
 	)
 	return InheritedSpanAttr{
 		SpanType:              attrSpanType,
@@ -90,6 +94,7 @@ func (sg *SpanAttrGenerator) SetPopulateParentSpanAttributes(span trace.Span, sp
 		ScreenName:            attrScreenName,
 		ScreenType:            attrScreenType,
 		NetworkConnectionType: attrNetworkConnectionType,
+		WebVersion:            attrWebVersion,
 	}
 }
 
@@ -101,6 +106,7 @@ func (sg *SpanAttrGenerator) SetPopulateChildSpanAttributes(span trace.Span, spa
 		attr.ScreenName,
 		attr.ScreenType,
 		attr.NetworkConnectionType,
+		attr.WebVersion,
 	)
 }
 
